@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Compression Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Data Compression Tool</h1>
+        
+        <div class="form-container">
+            <h2>Compress Data</h2>
+            <textarea id="inputText" rows="6" placeholder="Enter text to compress"></textarea>
+            <button id="compressBtn">Compress</button>
+            <textarea id="outputCompressedText" rows="6" readonly placeholder="Compressed data will appear here"></textarea>
+        </div>
+
+        <div class="form-container">
+            <h2>Decompress Data</h2>
+            <textarea id="inputCompressedText" rows="6" placeholder="Enter compressed data to decompress"></textarea>
+            <button id="decompressBtn">Decompress</button>
+            <textarea id="outputDecompressedText" rows="6" readonly placeholder="Decompressed data will appear here"></textarea>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

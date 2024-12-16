@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Random Number Generator</title>
+  </head>
+  <body>
+    <h1>Random Number Generator</h1>
+    <p>Enter the range to generate a random number:</p>
+
+    <label for="minValue">Minimum Value:</label>
+    <input type="number" id="minValue" name="minValue" /><br /><br />
+
+    <label for="maxValue">Maximum Value:</label>
+    <input type="number" id="maxValue" name="maxValue" /><br /><br />
+
+    <button onclick="generateRandomNumber()">Generate Random Number</button>
+
+    <p id="result"></p>
+
+    <script>
+      function generateRandomNumber() {
+        // Get the minimum and maximum values from the input fields
+        var min = parseInt(document.getElementById("minValue").value);
+        var max = parseInt(document.getElementById("maxValue").value);
+
+        // Check if the inputs are valid numbers
+        if (isNaN(min) || isNaN(max)) {
+          document.getElementById("result").textContent =
+            "Please enter valid numbers.";
+          return;
+        }
+
+        // Generate a random number between the minimum and maximum values
+        var randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
+        // Display the result
+        document.getElementById("result").textContent =
+          "Random Number: " + randomNumber;
+          console.log(min);
+          console.log(max);
+      }
+    </script>
+  </body>
+</html>
