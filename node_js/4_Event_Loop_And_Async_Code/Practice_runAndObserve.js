@@ -13,4 +13,4 @@ fs.readFile('user-details.txt' , 'utf8' , (err, dataAsync)=>{
     console.log('6. Asynchronous read complete');
 });
 
-console.log('5. End of script');
+console.log('5. End of script');    
