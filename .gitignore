@@ -1,0 +1,44 @@
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+
+# Ignore Node.js dependencies
+node_js\5_Npm_and_Tools/node_modules/
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore log files
+*.log
+
+# Ignore IDE files (e.g., VS Code, IntelliJ, etc.)
+.vscode/
+.idea/
+
+# Ignore build directories
+/dist/
+/build/
+
+# Ignore compiled object files (C/C++)
+*.o
+*.a
+*.out
+*.so
+
+# Ignore dependencies and lock files for JavaScript/Node.js
+npm-debug.log
+yarn-error.log
+
+# Ignore temporary files created by text editors
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Ignore JetBrains IDEs
+*.iml
