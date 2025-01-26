@@ -1,3 +1,8 @@
+# Ignore temp files
+c-c++/temp
+
+
+
 # Ignore macOS system files
 .DS_Store
 
