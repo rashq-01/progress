@@ -1,6 +1,7 @@
 # Ignore temp files
 c-c++/temp
 
+*.exe
 
 
 # Ignore macOS system files
