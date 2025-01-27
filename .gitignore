@@ -1,6 +1,5 @@
 # Ignore temp files
 c-c++/temp
-
 *.exe
 
 
