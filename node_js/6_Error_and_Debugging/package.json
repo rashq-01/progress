@@ -1,0 +1,15 @@
+{
+  "name": "error-debugging",
+  "version": "1.0.0",
+  "description": "This is for learning error and debugging",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "rajesh Pandit",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
