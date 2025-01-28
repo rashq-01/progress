@@ -38,7 +38,7 @@ class List{
                 return;
             }
             Node* temp = head;
-            head = temp->next;
+            head = head->next;
             temp->next = NULL;
             delete temp;
         }
@@ -60,7 +60,7 @@ class List{
                 return;
             }
             Node* temp = head;
-            if(temp->next != tail){
+            while(temp->next != tail){
                 temp = temp->next;
             }
             temp->next = NULL;
@@ -69,11 +69,54 @@ class List{
 
         }
 
+        void insert(int val, int pos){
+            if(pos <0){
+                cout<<"Invalid Position"<<endl;
+                return;
+            }
+            else if(pos == 0){
+                push_front(val);
+                return;
+            }
+            else{
+                Node* temp = head;
+                for(int i=0;i<(pos-2);i++){
+                    if(temp == NULL){
+                        cout<<"Invalid Position"<<endl;
+                        return;
+                    }
+                    temp = temp->next;
+                }
+                Node* newNode = new Node(val);
+                newNode->next = temp->next;
+                temp->next = newNode;
+            }
+        }
+
         void printList(){
             Node* temp = head;
+            int a = 1;
             while(temp != NULL){
-                cout<<"data = "<<temp->data<<"   Present Address = "<<temp<<"   next address = "<<temp->next<<endl;
+                cout<<a<<"  Data: "<<temp->data<<"  presentAddress: "<<temp<<"  nextAddress: "<<temp->next<<endl;
                 temp = temp->next;
+                a++;
+            }
+        }
+        void serach(int v){
+            Node* temp = head;
+            int a = 0;
+            while(temp != NULL){
+                ++a;
+                int data = temp->data;
+                if(data == v){
+                    cout<<endl<<endl<<"---------------DATA FOUND---------------"<<endl<<endl;
+                    cout<<"position: "<<a<<"  Data: "<<temp->data<<"  presentAddress: "<<temp<<"  nextAddress: "<<temp->next<<endl;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if(temp == NULL){
+                cout<<endl<<endl<<"Your data not found"<<endl<<endl;
             }
         }
 };
@@ -81,14 +124,15 @@ class List{
 
 int main(){
     List LL;
-    LL.push_front(1);
-    LL.push_front(2);
-    LL.push_front(3);
-    LL.push_front(4);
-    LL.push_back(2);
     LL.push_back(9);
-    LL.pop_front();
-    LL.pop_back();
+    LL.push_back(5);
+    LL.push_front(9);
+    LL.push_back(4);
+    LL.push_front(9);
+    LL.push_back(8);
+    LL.push_front(3);
+    LL.insert(112,3);
     LL.printList();
+    LL.serach(9);
 
 }
