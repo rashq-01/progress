@@ -20,6 +20,7 @@ class List{
             head = tail = NULL;
         }
 
+//Push_Front
         void push_front(int value){
             Node* newNode = new Node(value);
             if(head == NULL){
@@ -32,6 +33,7 @@ class List{
             }
         }
 
+//Pop_Front
         void pop_front(){
             if(head == NULL){
                 cout<<"Linked List is empty";
@@ -43,6 +45,8 @@ class List{
             delete temp;
         }
         
+//Push_Back
+
         void push_back(int value){
             Node* newNode = new Node(value);
             if(head == NULL){
@@ -53,6 +57,8 @@ class List{
                 tail = newNode;
             }
         }
+
+//Pop_Back
 
         void pop_back(){
             if(head == NULL){
@@ -69,18 +75,20 @@ class List{
 
         }
 
-        void insert(int val, int pos){
-            if(pos <0){
+//Insertion
+
+        void insert(int val, int position){
+            if(position <0){
                 cout<<"Invalid Position"<<endl;
                 return;
             }
-            else if(pos == 0){
+            else if(position == 0){
                 push_front(val);
                 return;
             }
             else{
                 Node* temp = head;
-                for(int i=0;i<(pos-2);i++){
+                for(int i=0;i<(position-2);i++){
                     if(temp == NULL){
                         cout<<"Invalid Position"<<endl;
                         return;
@@ -93,6 +101,65 @@ class List{
             }
         }
 
+//Deletion_By_Position
+
+        void deletion_byPosition(int index){
+            if(index<0){
+                cout<<"Invalid index"<<endl;
+                return;
+            }
+            else{
+                Node* prev = NULL;
+                Node* curr = head;
+                Node* nex = NULL;
+                int i = 0;
+                while(i != (index-1)){
+                    if(curr == NULL){
+                        cout<<"index out of range "<<endl;
+                        return;
+                    }
+                    nex = curr->next;
+                    prev = curr;
+                    curr = nex;
+                    i++;
+                }
+
+                prev->next = curr->next;
+                curr->next = NULL;
+                delete curr;
+            }
+
+        }
+
+//Deletion_By_Value
+
+        void deletion_byValue(int value){
+            Node* prev = NULL;
+            Node* curr = head;
+            Node* nex = NULL;
+            while(curr){
+                if(!curr){
+                    cout<<"Value not exist";
+                    return;
+                }
+                else if(curr->data == value){
+                    break;
+                }
+                else{
+                    nex = curr->next;
+                    prev = curr;
+                    curr = nex;
+                }
+            }
+            prev->next = curr->next;
+            curr->next = NULL;
+            delete curr;
+
+
+        }
+
+//Displaying_Linked_List_Datas
+
         void printList(){
             Node* temp = head;
             int a = 1;
@@ -102,6 +169,9 @@ class List{
                 a++;
             }
         }
+
+//Searching data
+
         void serach(int v){
             Node* temp = head;
             int a = 0;
@@ -124,15 +194,16 @@ class List{
 
 int main(){
     List LL;
-    LL.push_back(9);
-    LL.push_back(5);
-    LL.push_front(9);
-    LL.push_back(4);
-    LL.push_front(9);
-    LL.push_back(8);
+    LL.push_back(1);
+    LL.push_back(2);
     LL.push_front(3);
+    LL.push_back(4);
+    LL.push_front(5);
+    LL.push_back(6);
+    LL.push_front(7);
     LL.insert(112,3);
+     LL.printList();
+    LL.deletion_byValue(112);
     LL.printList();
-    LL.serach(9);
 
 }
