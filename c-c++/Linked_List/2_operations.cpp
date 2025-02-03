@@ -50,7 +50,7 @@ class List{
         void push_back(int value){
             Node* newNode = new Node(value);
             if(head == NULL){
-                head = tail = NULL;
+                head = tail = newNode;
             }
             else{
                 tail->next = newNode;
@@ -202,7 +202,7 @@ int main(){
     LL.push_back(6);
     LL.push_front(7);
     LL.insert(112,3);
-     LL.printList();
+    LL.printList();
     LL.deletion_byValue(112);
     LL.printList();
 
