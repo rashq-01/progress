@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+</head>
+
+<body>
+    <%- include('./partials/nav') %>
+    <main class="container mx-auto bg-white shadow-lg rounded-lg p-8 mt-10 max-w-xl">
+        <h1 class="text-5xl text-gray-800 font-bold text-center mb-6">Here are our registered Homes: </h1>
+        <ul class="space-y-4"></ul>
+            <% registeredHomes.forEach(home =>{ %>
+                <li class="text-lg text-gray-700 font-medium border-b pb-2"><%= home.houseName %></li>
+            <% }) %>
+        </ul>
+    </main>
+</body>
+
+</html>
