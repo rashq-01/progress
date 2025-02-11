@@ -45,7 +45,6 @@ void mergeSort(vector<int> &arr,int start, int end){
 }
 
 void printArray(vector<int>& arr,int size){
-    cout<<endl<<endl;
     for(int i=0;i<size;i++){
         cout<<arr[i]<<" ";
     }
@@ -54,7 +53,9 @@ void printArray(vector<int>& arr,int size){
 int main(){
     vector<int> arr= {7,4,3,6,5,1,2,};
     int size = arr.size();
+    cout<<"Before Sorting: ";
     printArray(arr,arr.size());
     mergeSort(arr,0,arr.size()-1);
+    cout<<endl<<"After Sorting: ";
     printArray(arr,arr.size());
 }
