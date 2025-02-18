@@ -6,7 +6,7 @@ const favouriteDataPath = path.join(rootDir, "data", "favourite.json");
 
 module.exports = class Favourite {
   static addToFavourite(homeId, callback){
-    Favourite.getFavourite((favourites) => {
+    Favourite.getFavourites((favourites) => {
           if(favourites.includes(homeId)){
             callback('Home is already marked');
           }
@@ -23,5 +23,14 @@ module.exports = class Favourite {
       callback(!err ? JSON.parse(data):[]);
     });
   };
+
+  static deleteById(delHomeId, callback){
+    Favourite.getFavourites((homeIds) => {
+      homeIds = homeIds.filter(homeId => delHomeId !== homeId);
+      fs.writeFile(favouriteDataPath, JSON.stringify(homeIds),callback);
+
+    });
+  };
+  
 
 };
