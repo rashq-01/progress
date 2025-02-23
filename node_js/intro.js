@@ -5,6 +5,6 @@ fs.writeFile("Example.txt","Writting to the file",(err)=>{
     console.log("Error occured");
   }
   else{
-    console.log("Data written to the file successfully...");
+    console.log("Dataa written to the file successfully...");
   }
 })
