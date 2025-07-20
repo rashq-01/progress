@@ -38,7 +38,7 @@ class Queue{
             }
             Node *temp = rear;
             rear = rear->next;
-            if(!rear){front=nullptr};
+            if(!rear) front=nullptr;
             delete temp;
         }
 
