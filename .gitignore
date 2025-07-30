@@ -51,3 +51,6 @@ yarn-error.log
 
 # Ignore JetBrains IDEs
 *.iml
+
+# Ignore Java class files
+*.class
