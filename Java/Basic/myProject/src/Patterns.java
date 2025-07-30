@@ -23,5 +23,6 @@ public class Patterns {
             }
             System.out.print("\n");
         }
+        scanner.close();
     }
 }

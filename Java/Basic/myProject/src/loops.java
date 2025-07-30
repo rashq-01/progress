@@ -32,5 +32,6 @@ public class loops {
             System.out.println((i + 1) + ". Do-While Loop");
             i++;
         } while (i != size);
+        scanner.close();
     }
 }
