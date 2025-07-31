@@ -1,4 +1,4 @@
-#include<conio.h>
+#include<iostream>
 #include<vector>
 using namespace std;
 
