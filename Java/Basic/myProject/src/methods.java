@@ -1,4 +1,5 @@
 
+import java.lang.*;
 import java.util.Scanner;
 
 public class methods {
@@ -28,9 +29,29 @@ public class methods {
         while (num > 0) {
             int dig = num % 10;
             res += dig;
-            dig /= 10;
+            num /= 10;
         }
         return res;
+    }
+
+    static void infoPrint(String s) {
+        System.out.println("Your name is " + s);
+    }
+
+    static void infoPrint(int age) {
+        System.out.println("Your age is : " + age);
+    }
+
+    static void infoPrint(double p) {
+        System.out.println("Your percentage is : " + p);
+    }
+
+    static void fibbo(int n) {
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+        }
+        System.out.printf("%d ", sum);
     }
 
     public static void main(String[] args) {
@@ -47,8 +68,16 @@ public class methods {
             System.out.println("False");
         }
 
-        System.out.printf("Reversed number of %d : ", a);
-        System.out.print(reverseNumber(a));
+        System.out.printf("Reversed number of %d : %d\n", a, reverseNumber(a));
 
+        infoPrint(21);
+        infoPrint(3.5);
+        System.out.println("\nEnter a number for fibbo : ");
+        int fb = sc.nextInt();
+        for (int i = 1; i <= fb; i++) {
+            fibbo(i);
+        }
+
+        sc.close();
     }
 }
