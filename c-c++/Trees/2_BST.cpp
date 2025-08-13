@@ -21,10 +21,10 @@ Node* insertion(Node* &root,int data){
         return root;
     }
 
-    if(data>=root->data){
+    if(data>root->data){
         insertion(root->right,data);
     }
-    else{
+    else if(data<root->data){
         insertion(root->left,data);
     }
 
@@ -42,6 +42,52 @@ void takeInput(Node* &root){
         cout<<endl<<"Enter data: ";
         cin>>d;
     }
+}
+
+
+//Minimum Value
+
+Node* minValue(Node* root){
+    Node* curr = root;
+    while(curr && curr->left){
+        curr = curr->left;
+    }
+    return curr;
+}
+
+//Deletion
+
+Node* removeNode(Node* root,int key){
+    if(!root) return root;
+
+    if(key<root->data){
+        root->left = removeNode(root->left,key);
+    }
+    else if(key>root->data){
+        root->right = removeNode(root->right,key);
+    }
+    else{
+        //1 or 0 Child
+        if(!root->left || !root->right){
+            Node* temp = root->left ? root->left : root->right;
+
+            if(!temp){
+                delete root;
+                root= NULL;
+            }
+            else{
+                *root = *temp;
+                delete temp;
+            }
+        }
+        else{
+            Node* temp = minValue(root->right);
+            root->data = temp->data;
+            root->right = removeNode(root->right,temp->data);
+        }
+
+    }
+    return root;
 }
 
 void levelOrderTraversal(Node* root){
@@ -103,6 +149,8 @@ int main(){
    cout<<endl<<"Printing the level of traversal output: "<<endl;
    levelOrderTraversal(root);
     cout<<endl<<"Inorder Traversal: ";
+    inOrderTraversal(root);
+    removeNode(root,9);
     inOrderTraversal(root);
 
 
