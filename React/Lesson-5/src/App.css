@@ -1,0 +1,15 @@
+
+
+.title{
+  color: aquamarine;
+  font-size: larger;
+  font-style: oblique;
+}
+
+.btn {
+  background: blue;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+}
