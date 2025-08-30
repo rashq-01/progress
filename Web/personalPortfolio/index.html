@@ -3,56 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Rajesh Portfolio</title>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-
 
     <header class="header">
         <a href="#" class="logo">Portfolio</a>
 
         <nav class="navbar">
-            <a href="#" style="--i:1;" class="active">Home</a>
-            <a href="#" style="--i:2;">About</a>
-            <a href="#" style="--i:3;">Skills</a>
-            <a href="#" style="--i:4;">Portfolio</a>
-            <a href="#" style="--i:5;">Contact-Us</a>
+            <a href="#home" style="--i:1;" class="active">Home</a>
+            <a href="#about" style="--i:2;">About</a>
+            <a href="#skills" style="--i:3;">Skills</a>
+            <a href="#portfolio" style="--i:4;">Portfolio</a>
+            <a href="#contact" style="--i:5;">Contact</a>
         </nav>
     </header>
 
-
-    <section class="home">
-
+    <!-- Home Section -->
+    <section id="home" class="home">
         <div class="home-sci">
             <a href="https://www.facebook.com/rashq0" target="_blank"><i class='bx bxl-facebook'></i></a>
             <a href="https://www.linkedin.com/in/rashq" target="_blank"><i class='bx bxl-linkedin'></i></a>
             <a href="https://www.github.com/rashq-01" target="_blank"><i class='bx bxl-github'></i></a>
         </div>
 
-
         <div class="home-content">
             <h1>Hi, I'm Rajesh Pandit</h1>
             <h3>CSE Student</h3>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora sint illo natus! Perspiciatis aut esse est placeat optio unde autem.</p>
-            <a href="#" class="btn">Hire Me</a>
+            <p>I'm a passionate Computer Science student with a keen interest in web development, software engineering, and creating innovative digital solutions that make a difference.</p>
+            <a href="#contact" class="btn">Hire Me</a>
         </div>
-
 
         <div class="home-img">
             <div class="glowing-cirlce">
                 <span></span>
                 <span></span>
-                <div class="image"><img src="./src/pic.jpg" alt="Picture"></div>
+                <div class="image">
+                    <img src="./src/pic.jpg" alt="Rajesh Pandit">
+                </div>
             </div>
         </div>
-
-
-
-
     </section>
 
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h2 class="section-title">About <span>Me</span></h2>
+        
+        <div class="about-content">
+            <div class="about-img">
+                <img src="https://images.unsplash.com/photo-1540569876033-6e5d046a1d77?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="About Me">
+            </div>
+            
+            <div class="about-text">
+                <h3>Computer Science Student & Developer</h3>
+                <p>I am currently pursuing my Bachelor's degree in Computer Science and Engineering. I have a passion for creating innovative web applications and software solutions. With a strong foundation in programming principles and experience across multiple platforms, I'm proficient in various modern technologies.</p>
+                
+                <div class="about-info">
+                    <div>
+                        <span>Name:</span>
+                        <span>Rajesh Pandit</span>
+                    </div>
+                    <div>
+                        <span>Email:</span>
+                        <span>rajesh@example.com</span>
+                    </div>
+                    <div>
+                        <span>Age:</span>
+                        <span>21 years</span>
+                    </div>
+                    <div>
+                        <span>From:</span>
+                        <span>Kathmandu, Nepal</span>
+                    </div>
+                </div>
+                
+                <a href="#" class="btn">Download CV</a>
+            </div>
+        </div>
+    </section>
 
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <h2 class="section-title">My <span>Skills</span></h2>
+        
+        <div class="skills-container">
+            <div class="skill-box" style="--i:1">
+                <h3 class="skill-title">Web Development</h3>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>HTML</span>
+                        <span>95%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>CSS</span>
+                        <span>90%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>JavaScript</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="skill-box" style="--i:2">
+                <h3 class="skill-title">Programming</h3>
+                <div class="skill">
+                        <div class="skill-name">
+                            <span>C++</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Java</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Python</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="skill-box" style="--i:3">
+                <h3 class="skill-title">Frameworks</h3>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>React</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Node.js</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 80%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Express</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="skill-box" style="--i:4">
+                <h3 class="skill-title">Database</h3>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>MySQL</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>MongoDB</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <h2 class="section-title">My <span>Projects</span></h2>
+        
+        <div class="portfolio-content">
+            <div class="portfolio-item" style="--i:1">
+                <div class="portfolio-img">
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="E-commerce Website">
+                </div>
+                <div class="portfolio-info">
+                    <h3>E-commerce Website</h3>
+                    <p>Full-stack e-commerce platform with React frontend and Node.js backend. Includes user authentication, payment processing, and admin dashboard.</p>
+                    <a href="#" class="portfolio-link">View Project <i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            
+            <div class="portfolio-item" style="--i:2">
+                <div class="portfolio-img">
+                    <img src="https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Weather App">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Weather Application</h3>
+                    <p>Real-time weather application that provides forecasts based on location. Built with JavaScript and Weather API integration.</p>
+                    <a href="#" class="portfolio-link">View Project <i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            
+            <div class="portfolio-item" style="--i:3">
+                <div class="portfolio-img">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Task Manager">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Task Management App</h3>
+                    <p>Productivity application for managing daily tasks with drag-and-drop functionality, reminders, and progress tracking.</p>
+                    <a href="#" class="portfolio-link">View Project <i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            
+            <div class="portfolio-item" style="--i:4">
+                <div class="portfolio-img">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Blog Platform">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Blog Platform</h3>
+                    <p>Content management system for bloggers with rich text editor, comment system, and user management features.</p>
+                    <a href="#" class="portfolio-link">View Project <i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2 class="section-title">Contact <span>Me</span></h2>
+        
+        <div class="contact-content">
+            <div class="contact-info">
+                <h3>Get in Touch</h3>
+                <p><i class='bx bx-envelope'></i> rajesh@example.com</p>
+                <p><i class='bx bx-phone'></i> +977 9841000000</p>
+                <p><i class='bx bx-map'></i> Kathmandu, Nepal</p>
+                
+                <div class="contact-social">
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="#"><i class='bx bxl-linkedin'></i></a>
+                    <a href="#"><i class='bx bxl-github'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <form action="#">
+                    <div class="input-box">
+                        <input type="text" required>
+                        <span>Full Name</span>
+                    </div>
+                    <div class="input-box">
+                        <input type="email" required>
+                        <span>Email Address</span>
+                    </div>
+                    <div class="input-box">
+                        <input type="text" required>
+                        <span>Subject</span>
+                    </div>
+                    <div class="input-box">
+                        <textarea required></textarea>
+                        <span>Your Message</span>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Copyright &copy; 2023 by Rajesh Pandit | All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Highlight active menu item based on scroll position
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.navbar a');
+        
+        window.onscroll = () => {
+            sections.forEach(section => {
+                let top = window.scrollY;
+                let offset = section.offsetTop - 150;
+                let height = section.offsetHeight;
+                let id = section.getAttribute('id');
+                
+                if(top >= offset && top < offset + height) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        document.querySelector('.navbar a[href*=' + id + ']').classList.add('active');
+                    });
+                }
+            });
+        };
+    </script>
 </body>
 </html>
