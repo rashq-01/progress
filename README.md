@@ -1,2 +1,2 @@
 # progress
-learings
+Learnings
