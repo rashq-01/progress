@@ -43,9 +43,11 @@ vector<vector<int>> depthFirstSearch(int V, int E, vector<vector<int>> &edges){
 
 
 int main() {
-    int V = 10;
-    int E = 12;
-    vector<vector<int>> edges = {{0,1},{0,2},{0,3},{3,2},{2,1},{1,4},{4,2},{3,4},{5,6},{6,7},{7,5},{8,9}};
+    int V = 20;
+    int E = 24;
+    vector<vector<int>> edges = {
+        {1,8},{1,15},{1,14},{2,13},{2,8},{3,13},{3,5},{4,6},{4,16},{4,0},{4,9},{5,18},{5,11},{5,17},{7,16},{7,14},{9,10},{10,17},{11,19},{11,18},{12,19},{12,13},{14,15},{17,18}
+    };
 
     vector<vector<int>> components = depthFirstSearch(V, E, edges);
 
