@@ -111,3 +111,48 @@ double measureMergeSort(int arr[],int n){
     end = clock();
     return ((double)(end-start)) / CLOCKS_PER_SEC;
 }
+
+int main(){
+    srand(time(0));
+    int sizes[] = {1000, 5000, 10000, 20000};
+    int nSizes = sizeof(sizes) / sizeof(sizes[0]);
+
+    for(int s=0;s<nSizes;s++){
+        int n = sizes[s];
+        int *arr = (int *)malloc(n * sizeof(int));
+        int *copy = (int *)malloc(n * sizeof(int));
+
+        printf("\n----Input Size : %d ----\n",n);
+
+        //Best Case
+        generateBestCase(arr,n);
+        copyArray(arr,copy,n);
+        printf("--------Best Case--------\n");
+        printf("Quick Sort : %f sec\n",measureQuickSort(copy,n));
+        copyArray(arr,copy,n);
+        printf("Merge Sort : %f sec\n",measureMergeSort(copy,n));
+
+
+        //Average Case
+        generateAverageCase(arr,n);
+        copyArray(arr,copy,n);
+        printf("--------Average Case--------\n");
+        printf("Quick Sort : %f sec\n",measureQuickSort(copy,n));
+        copyArray(arr,copy,n);
+        printf("Merge Sort : %f sec\n",measureMergeSort(copy,n));
+
+
+        //Worst Case
+        generateBestCase(arr,n);
+        copyArray(arr,copy,n);
+        printf("--------Worst Case--------\n");
+        printf("Quick Sort : %f sec\n",measureQuickSort(copy,n));
+        copyArray(arr,copy,n);
+        printf("Merge Sort : %f sec\n",measureMergeSort(copy,n));
+
+        free(arr);
+        free(copy);
+    }
+
+    return 0;
+}
