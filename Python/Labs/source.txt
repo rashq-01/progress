@@ -1,0 +1,2 @@
+This is a Sample File for testing the Python program
+It contains Words in both Upper and lower case

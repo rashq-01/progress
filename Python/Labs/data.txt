@@ -1,0 +1,4 @@
+Line 1: First line of the file.
+Line 2: This is the second line.
+Line 3: Penultimate line here.
+Line 4: The final line.
