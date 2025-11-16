@@ -21,6 +21,7 @@ void fractionalKnapsack(struct Item items[],int n,int W){
                 struct Item temp = items[j];
                 items[j] = items[i];
                 items[i] = temp;
+                
                 float t = fract[i];
                 fract[i] = fract[j];
                 fract[j] = t;
