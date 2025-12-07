@@ -1,0 +1,26 @@
+1.  C/C++
+2.  C/C++ extensions
+3.  C/C++ Themes
+4.  CMake
+5.  CMake Tools
+6.  Code runner
+7.  Eslint
+8.  //Incredibly In your Face
+9.  Live server
+10. prettier - Code formatter
+11. Python
+12. //Hack The Box
+13. //Font FiraCode
+14. //Font Firacode
+15. //indent-rainbow
+16. //Code Spell Checker
+17. //GraphQl 
+18. //tabnine Ai AutoComplete
+19. Tailwind CSS intellisense
+20. //favorites
+21. //thunder clients
+22. ES7 React\Redux
+23. Bracket Pair Colorizer
+24. Material Icon theme
+25. IntelliSense for CSS class names in HTML
+26. MongoDB for VS Code
