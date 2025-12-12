@@ -1,7 +1,6 @@
 *{
     font-family: 'Montserrat','sans-serif';
     margin: 0;
-    background-color: black;
     color: #fff;
     overflow: hidden;
 
@@ -10,12 +9,16 @@
 .main{
     display: flex;
     height: 100vh;
+    padding: .5rem;
+    background-color: black;
 }
 
 .sidebar{
-    background-color: yellow;
-    width: 340px;
+    background-color: black;
+    width: 330px;
     border-radius: 1rem;
+    /* padding-right: .90rem; */
+    margin-right: 0.5rem;
 }
 
 
@@ -24,6 +27,7 @@
     flex: 1;
     border-radius: 1rem;
     overflow: auto;
+    padding: 0 1.5rem 0 1.5rem;
 }
 
 .music-player{
@@ -49,6 +53,7 @@ a{
 }
 
 .nav-option{
+    background-color: #121212;
     line-height: 2.5rem;
     opacity: 0.7;
 }
@@ -57,11 +62,180 @@ a{
 }
 
 .nav-option i {
+        background-color: #121212;
     font-size: 1.25rem;
 }
 
 
 .nav-option a{
+    background-color: #121212;
     font-size: 1rem;
     margin-left: 1rem;
+} 
+
+
+.library{
+    background-color: #121212;
+    border-radius: 1rem;
+    height: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.options{
+    background-color: #121212;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#arrow{
+    rotate: -90deg;
+}
+.lib-option img{
+    height: 1.25rem ;
+    width: 1.25rem;
+
+}
+.icons{
+    background-color: #121212;
+    font-size: 1.2;
+    opacity: .7;
+    margin-right: 1rem;
+    display: flex;
+}
+
+.icons i{
+    background-color: #121212;
+    opacity: .7;
+    margin-right: 1rem;
+}
+.icons i:hover{
+    opacity: 1;
+}
+
+.box{
+    height: 8rem;
+    background-color: #232323;
+    border-radius: 0.75rem;
+    margin: 1.75rem 0 1.75rem 0;
+    padding: .5rem 1.25rem;
+    font-weight: 600;
+
+
+}
+.lib-box{
+    background-color: #121212;
+}
+
+.box-p1{
+    margin: .75rem 0;
+    background-color: #232323;
+    font-size: 1rem;
+}
+
+.box-p2{
+    margin: .75rem 0;
+    background-color: #232323;
+    font-size: 0.75rem;
+    opacity: 0.75;
+}
+.badge{
+    background-color: white;
+    border: none;
+    border-radius: 100px;
+    padding: .25rem 1rem;
+    font-weight: 700;
+    color: #121212;
+    margin-top: .2rem;
+    height: 1.7rem;
+    width: fit-content;
+}
+
+.dark-badge{
+    background-color: #000;
+    color: #fff;
+}
+
+
+.sticky-nav{
+    position: sticky;
+    top: 0;
+    background-color: #121212;
+    display: flex;
+    justify-content: space-between ;
+    align-items: center;
+    padding: 1rem 0 1rem 0;
+    z-index: 10;
+}
+
+.sticky-nav-icons{
+    background-color: #121212;
+    margin-left: 0.75rem;
+}
+.sticky-nav-icons img{
+    background-color: #121212;
+}
+
+.sticky-nav-options{
+    background-color: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.user{
+    background-color: #121212;
+}
+.nav-item{
+    margin-right: 1rem;
+}
+
+@media (max-width:1000px){
+    .hide{
+        display: none;
+    }
+}
+ 
+.card{
+    background-color: #232323;
+    width: 150px;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-left: 1.5rem;
+    margin-top: 1rem;
+}
+
+.card-containers{
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+
+.card-img{
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.card-title{
+    font-weight: 600;
+}
+
+.card-info{
+    font-size: 0.85rem;
+    opacity: 0.5;
+}
+
+
+.footer{
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.line{
+    width: 90%;
+    height: 50%;
+    border-top: 1px solid white;
+    opacity: 0.4;
 }
