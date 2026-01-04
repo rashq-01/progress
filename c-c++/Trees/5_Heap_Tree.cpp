@@ -67,22 +67,22 @@ void buildHeap(int arr[],int n){
 
 int main(){
 
-    heap h;
+    // heap h;
 
-    h.insert(12);
-    h.insert(23);
-    h.insert(2);
-    h.insert(4);
-    h.insert(32);
-    h.insert(11);
-    h.insert(21);
-    h.insert(45);
-    h.insert(67);
-    h.insert(17);
-    h.insert(43);
-    h.insert(32);
-    h.insert(32);
-    h.display();
+    // h.insert(12);
+    // h.insert(23);
+    // h.insert(2);
+    // h.insert(4);
+    // h.insert(32);
+    // h.insert(11);
+    // h.insert(21);
+    // h.insert(45);
+    // h.insert(67);
+    // h.insert(17);
+    // h.insert(43);
+    // h.insert(32);
+    // h.insert(32);
+    // h.display();
 
 
     // index-1 based array
