@@ -15,3 +15,4 @@ storeRouter.post('/favourites',storeController.postAddToFavourite);
 storeRouter.post('/favourites/delete/:homeId',storeController.postRemoveFavourite);
 
 module.exports = storeRouter;
+
