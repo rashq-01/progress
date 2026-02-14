@@ -1,0 +1,78 @@
+/* SimpleCounter.css */
+.counter-container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.counter-display {
+  margin: 20px 0;
+}
+
+.count {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.counter-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+}
+
+.btn-increment {
+  background: #28a745;
+  color: white;
+}
+
+.btn-decrement {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-add-five {
+  background: #ffc107;
+  color: #333;
+}
+
+.btn-reset {
+  background: #6c757d;
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.counter-info {
+  margin-top: 20px;
+  color: #666;
+}
+
+.warning {
+  color: #28a745;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
