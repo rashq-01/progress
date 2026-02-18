@@ -37,14 +37,14 @@ function RegistrationForm() {
       "Web Development",
       "Database",
     ],
-    Engineering: [
+    "Engineering": [
       "Thermodynamics",
       "Fluid Mechanics",
       "Circuit Analysis",
       "Materials",
     ],
-    Business: ["Marketing", "Finance", "Economics", "Management"],
-    Arts: ["History", "Literature", "Philosophy", "Psychology"],
+    "Business": ["Marketing", "Finance", "Economics", "Management"],
+    "Arts": ["History", "Literature", "Philosophy", "Psychology"],
   };
 
   // Generic change handler
