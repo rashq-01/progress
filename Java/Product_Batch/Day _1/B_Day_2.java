@@ -2,7 +2,11 @@
 import java.util.Scanner;
 
 class B_Day_2 {
+    public int fact(int n){
+      if(n==0 || n==1)return 1;
 
+      return n * fact(n-1);
+    }
     public static void main(String[] args) {
         //Bit manipulations
 
@@ -126,6 +130,7 @@ class B_Day_2 {
         System.out.println("Product of digits : " + prod);
         System.out.println("The highest digit  : " + highest);
         System.out.print("Least digit : " + least);
+        
 
     
 
