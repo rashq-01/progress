@@ -30,7 +30,6 @@ class Solution {
                 int wt = nbr.second;
                 
                 if(currDist+wt < dest[v]){
-                    
                     s.erase({dest[v],v});
                     
                     dest[v] = currDist+wt;

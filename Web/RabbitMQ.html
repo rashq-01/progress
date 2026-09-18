@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RabbitMQ Masterclass — Phase 1 & 2 | Basics to Advanced</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Sora:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04060d;
+  --surface: #080d1a;
+  --card: #0c1220;
+  --border: #1a2540;
+  --text: #c8d6f0;
+  --muted: #506080;
+  --rabbit: #FF6600;
+  --rabbit2: #FF8C00;
+  --cyan: #00d4ff;
+  --green: #00e5a0;
+  --gold: #ffc040;
+  --red: #ff4466;
+  --blue: #4d8bff;
+  --violet: #a855f7;
+  --pink: #ff6eb4;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Sora', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(255,102,0,0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,102,0,0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(4,6,13,0.95);
+  border-bottom: 1px solid rgba(255,102,0,0.2);
+  backdrop-filter: blur(12px);
+  padding: 0 32px;
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto;
+}
+.nav-brand {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--rabbit); white-space: nowrap;
+  padding: 16px 24px 16px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 8px;
+}
+.nav a {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  color: var(--muted); text-decoration: none;
+  padding: 16px 14px; white-space: nowrap;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.nav a:hover { color: var(--rabbit); border-bottom-color: var(--rabbit); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 80px 48px 64px;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,102,0,0.1) 0%, transparent 60%);
+}
+.phase-ribbon {
+  display: inline-flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; justify-content: center;
+}
+.ph-badge {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  padding: 5px 16px; border-radius: 2px; letter-spacing: 2px; text-transform: uppercase;
+}
+.ph1 { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+.ph2 { background: rgba(255,102,0,0.1); color: var(--rabbit); border: 1px solid rgba(255,102,0,0.4); }
+.hero h1 { font-size: clamp(40px,6vw,76px); font-weight: 900; color: #fff; letter-spacing: -2px; margin-bottom: 16px; }
+.hero h1 span { color: var(--rabbit); }
+.hero-sub { font-size: 16px; color: var(--muted); max-width: 640px; margin: 0 auto 40px; }
+.hero-stats {
+  display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+}
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 24px; text-align: center; }
+.stat-n { font-family: var(--mono); font-size: 22px; font-weight: 800; color: var(--rabbit); }
+.stat-l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px 100px; position: relative; z-index: 1; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 80px; }
+.section-tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--rabbit); margin-bottom: 10px;
+}
+.section-title { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 8px; }
+.section-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; max-width: 700px; }
+.divider { height: 1px; background: linear-gradient(90deg, var(--rabbit), transparent); margin: 72px 0; opacity: 0.3; }
+
+/* ── PHASE HEADER ── */
+.phase-header {
+  border-radius: 12px; padding: 28px 32px; margin-bottom: 48px;
+  border: 1px solid; position: relative; overflow: hidden;
+}
+.phase-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.phase1 { background: rgba(0,212,255,0.05); border-color: rgba(0,212,255,0.2); }
+.phase1::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+.phase1 .ph-title { color: var(--cyan); }
+.phase2 { background: rgba(255,102,0,0.05); border-color: rgba(255,102,0,0.25); }
+.phase2::before { background: linear-gradient(90deg, var(--rabbit), transparent); }
+.phase2 .ph-title { color: var(--rabbit); }
+.ph-label { font-family: var(--mono); font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.ph-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.ph-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.ph-topics { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.ph-topic { font-family: var(--mono); font-size: 10px; padding: 3px 10px; border-radius: 2px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted); }
+
+/* ── CARDS ── */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+.card-title { font-size: 15px; font-weight: 700; color: #e8f0ff; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.card p, .card li { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.card li { margin-bottom: 4px; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ── CONCEPT HIGHLIGHT ── */
+.concept {
+  background: linear-gradient(135deg, rgba(255,102,0,0.07), rgba(255,102,0,0.03));
+  border: 1px solid rgba(255,102,0,0.25); border-radius: 10px;
+  padding: 20px 24px; margin: 20px 0;
+}
+.concept-title { font-size: 13px; font-weight: 700; color: var(--rabbit); margin-bottom: 8px; font-family: var(--mono); letter-spacing: 1px; }
+.concept p, .concept li { font-size: 13px; color: #94a3b8; line-height: 1.7; }
+.concept ul { padding-left: 18px; }
+
+.tip { background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.2); border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+.tip-title { font-size: 12px; font-weight: 700; color: var(--green); font-family: var(--mono); margin-bottom: 6px; letter-spacing: 1px; }
+.tip p { font-size: 13px; color: #64748b; }
+
+.warn { background: rgba(255,68,102,0.06); border: 1px solid rgba(255,68,102,0.2); border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+.warn-title { font-size: 12px; font-weight: 700; color: var(--red); font-family: var(--mono); margin-bottom: 6px; letter-spacing: 1px; }
+.warn p { font-size: 13px; color: #64748b; }
+
+/* ── CODE ── */
+.code-wrap { background: #020810; border: 1px solid #1e3a5f; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+.code-header { background: #0a1628; padding: 10px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1e3a5f; }
+.code-lang { font-family: var(--mono); font-size: 11px; color: var(--rabbit); font-weight: 700; letter-spacing: 1px; }
+.code-desc { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.code-body { padding: 20px 20px; overflow-x: auto; }
+.code-body pre { font-family: var(--mono); font-size: 13px; line-height: 1.9; color: #e2e8f0; }
+.kw { color: #818cf8; font-weight: 600; }
+.fn { color: #4ade80; }
+.str { color: #f59e0b; }
+.cm { color: #4b5563; font-style: italic; }
+.num { color: #f472b6; }
+.cls { color: #60a5fa; }
+.prop { color: #e2e8f0; }
+.op { color: #94a3b8; }
+
+/* ── DIAGRAM ── */
+.diagram-wrap {
+  background: #07101a; border: 1px solid #1e3a5f; border-radius: 14px;
+  padding: 0; margin: 24px 0; overflow: hidden;
+  position: relative;
+}
+.diagram-header {
+  background: #0a1628; padding: 14px 24px; border-bottom: 1px solid #1e3a5f;
+  display: flex; align-items: center; gap: 12px;
+}
+.diagram-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--rabbit); letter-spacing: 2px; }
+.diagram-title { font-family: var(--mono); font-size: 12px; color: #94a3b8; }
+.diagram-body { padding: 32px; }
+svg { width: 100%; overflow: visible; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th { background: #0d2137; color: #e2e8f0; padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; font-family: var(--mono); letter-spacing: 0.5px; }
+td { padding: 11px 16px; font-size: 13px; color: #94a3b8; border-bottom: 1px solid #0d2137; }
+tr:hover td { background: #07101a; }
+td:first-child { color: var(--rabbit); font-weight: 600; font-family: var(--mono); }
+
+/* ── FAANG CALLOUT ── */
+.faang {
+  background: linear-gradient(135deg, rgba(255,192,64,0.07), rgba(255,128,64,0.04));
+  border: 1px solid rgba(255,192,64,0.25); border-radius: 10px;
+  padding: 20px 24px; margin: 24px 0;
+}
+.faang-title { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.faang ul { padding-left: 18px; }
+.faang li { font-size: 13px; color: #94a3b8; margin-bottom: 6px; line-height: 1.6; }
+.faang li::marker { color: var(--gold); }
+
+/* ── FLOW STEP ── */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin: 20px 0; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.step-line { display: flex; flex-direction: column; align-items: center; }
+.step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.step-connector { width: 2px; flex: 1; min-height: 24px; background: var(--border); margin: 4px 0; }
+.step-content { flex: 1; padding-bottom: 24px; }
+.step-title { font-size: 14px; font-weight: 700; color: #e8f0ff; margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── EXCHANGE TYPE CARDS ── */
+.exchange-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin: 20px 0; }
+.ex-card { border-radius: 10px; padding: 20px; border: 1px solid; }
+.ex-direct { background: rgba(0,212,255,0.05); border-color: rgba(0,212,255,0.2); }
+.ex-fanout { background: rgba(0,229,160,0.05); border-color: rgba(0,229,160,0.2); }
+.ex-topic  { background: rgba(255,192,64,0.05); border-color: rgba(255,192,64,0.2); }
+.ex-headers{ background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); }
+.ex-name { font-family: var(--mono); font-size: 13px; font-weight: 800; margin-bottom: 8px; }
+.ex-direct .ex-name { color: var(--cyan); }
+.ex-fanout .ex-name { color: var(--green); }
+.ex-topic  .ex-name { color: var(--gold); }
+.ex-headers .ex-name { color: var(--violet); }
+.ex-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.ex-routing { font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+.ex-direct .ex-routing  { background: rgba(0,212,255,0.1); color: var(--cyan); }
+.ex-fanout .ex-routing  { background: rgba(0,229,160,0.1); color: var(--green); }
+.ex-topic  .ex-routing  { background: rgba(255,192,64,0.1); color: var(--gold); }
+.ex-headers .ex-routing { background: rgba(168,85,247,0.1); color: var(--violet); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">🐰 RabbitMQ</div>
+  <a href="#phase1">Phase 1</a>
+  <a href="#what">What is MQ</a>
+  <a href="#core">Core Concepts</a>
+  <a href="#exchanges">Exchanges</a>
+  <a href="#setup">Setup</a>
+  <a href="#phase2">Phase 2</a>
+  <a href="#patterns">Patterns</a>
+  <a href="#reliability">Reliability</a>
+  <a href="#cluster">Clustering</a>
+  <a href="#advanced">Advanced</a>
+  <a href="#faang">FAANG</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="phase-ribbon">
+    <span class="ph-badge ph1">Phase 1 — Basics</span>
+    <span class="ph-badge ph2">Phase 2 — Advanced</span>
+  </div>
+  <h1>Rabbit<span>MQ</span><br>Masterclass</h1>
+  <p class="hero-sub">Basics se lekar FAANG-level advanced patterns tak — complete notes with code snippets, diagrams, and real-world architecture.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Phases</div></div>
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Diagrams</div></div>
+    <div class="stat"><div class="stat-n">25+</div><div class="stat-l">Code Snippets</div></div>
+    <div class="stat"><div class="stat-n">FAANG</div><div class="stat-l">Level Depth</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PHASE 1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="phase1" class="section">
+  <div class="phase-header phase1">
+    <div class="ph-label">Phase 1 · Fundamentals</div>
+    <div class="ph-title">Basics — Message Queues se RabbitMQ tak</div>
+    <div class="ph-desc">Is phase mein hum samjhenge ki message queues kyun exist karte hain, RabbitMQ kya hai, iske core components kaise kaam karte hain, aur Node.js mein first working example kaise banate hain.</div>
+    <div class="ph-topics">
+      <span class="ph-topic">What is MQ</span>
+      <span class="ph-topic">AMQP Protocol</span>
+      <span class="ph-topic">Producer/Consumer</span>
+      <span class="ph-topic">Exchanges (4 types)</span>
+      <span class="ph-topic">Queues & Bindings</span>
+      <span class="ph-topic">First Code</span>
+      <span class="ph-topic">Acknowledgements</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: WHAT IS MESSAGE QUEUE -->
+<div id="what" class="section">
+  <div class="section-tag">Phase 1 · Section 1</div>
+  <div class="section-title">Message Queue Kyun Chahiye?</div>
+  <div class="section-sub">Pehle problem samjho — tab solution easy lagega.</div>
+
+  <!-- DIAGRAM 1 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 1</span>
+      <span class="diagram-title">Without MQ vs With MQ — Synchronous vs Asynchronous</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 340" height="340">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="arrc" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="arrr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff4466"/></marker>
+        </defs>
+
+        <!-- WITHOUT MQ -->
+        <text x="240" y="20" text-anchor="middle" fill="#ff4466" font-size="13" font-weight="700" font-family="JetBrains Mono">❌ WITHOUT Message Queue</text>
+        <rect x="20" y="35" width="110" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="1.5"/>
+        <text x="75" y="60" text-anchor="middle" fill="#ff6666" font-size="12" font-weight="700">User</text>
+        <text x="75" y="78" text-anchor="middle" fill="#64748b" font-size="10">API Request</text>
+        <line x1="130" y1="62" x2="185" y2="62" stroke="#ff4466" stroke-width="2" marker-end="url(#arrr)"/>
+        <rect x="185" y="35" width="120" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="1.5"/>
+        <text x="245" y="60" text-anchor="middle" fill="#ff6666" font-size="12" font-weight="700">API Server</text>
+        <text x="245" y="78" text-anchor="middle" fill="#64748b" font-size="10">blocks &amp; waits</text>
+        <line x1="305" y1="62" x2="360" y2="62" stroke="#ff4466" stroke-width="2" marker-end="url(#arrr)"/>
+        <rect x="360" y="35" width="120" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="1.5"/>
+        <text x="420" y="57" text-anchor="middle" fill="#ff6666" font-size="12" font-weight="700">Email Service</text>
+        <text x="420" y="74" text-anchor="middle" fill="#64748b" font-size="10">5 seconds...</text>
+
+        <!-- Problems -->
+        <rect x="20" y="115" width="460" height="90" rx="8" fill="#0d0202" stroke="#7f1d1d" stroke-width="1"/>
+        <text x="250" y="137" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">Problems:</text>
+        <text x="40" y="156" fill="#64748b" font-size="11">• API Server BLOCKS until email sent — user waits 5 seconds</text>
+        <text x="40" y="173" fill="#64748b" font-size="11">• Email service crash = API crash = user gets 500 error</text>
+        <text x="40" y="190" fill="#64748b" font-size="11">• Traffic spike: 10K users → email service overwhelmed → cascading failure</text>
+
+        <!-- WITH MQ -->
+        <text x="800" y="20" text-anchor="middle" fill="#00e5a0" font-size="13" font-weight="700" font-family="JetBrains Mono">✅ WITH RabbitMQ</text>
+        <rect x="540" y="35" width="90" height="55" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="585" y="60" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">User</text>
+        <text x="585" y="78" text-anchor="middle" fill="#64748b" font-size="10">API Request</text>
+        <line x1="630" y1="62" x2="680" y2="62" stroke="#00e5a0" stroke-width="2" marker-end="url(#arrc)"/>
+        <rect x="680" y="35" width="100" height="55" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="730" y="57" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">API Server</text>
+        <text x="730" y="74" text-anchor="middle" fill="#64748b" font-size="10">200 OK instantly</text>
+        <line x1="780" y1="62" x2="830" y2="62" stroke="#ff6600" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="830" y="20" width="110" height="95" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2.5"/>
+        <text x="885" y="52" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800">Rabbit</text>
+        <text x="885" y="68" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800">MQ</text>
+        <text x="885" y="87" text-anchor="middle" fill="#64748b" font-size="10">Queue Buffer</text>
+        <line x1="940" y1="62" x2="980" y2="62" stroke="#ff6600" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="980" y="35" width="100" height="55" rx="8" fill="#030c06" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="1030" y="57" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">Email</text>
+        <text x="1030" y="74" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">Worker</text>
+
+        <!-- Benefits -->
+        <rect x="540" y="115" width="540" height="90" rx="8" fill="#030c06" stroke="#166534" stroke-width="1"/>
+        <text x="810" y="137" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Benefits:</text>
+        <text x="560" y="156" fill="#64748b" font-size="11">• API returns 200 in &lt;10ms — user doesn't wait</text>
+        <text x="560" y="173" fill="#64748b" font-size="11">• Email service crash → messages safe in queue → retry when it comes back</text>
+        <text x="560" y="190" fill="#64748b" font-size="11">• Traffic spike: 100K messages queued, workers process at their own pace</text>
+
+        <!-- Bottom label -->
+        <text x="550" y="228" fill="#475569" font-size="11" font-style="italic">Producer (API Server) = publishes message | Queue = buffer | Consumer (Worker) = processes</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-title">Message Queue — Definition</div>
+    <p>Ek Message Queue ek <strong style="color:#ff6600">asynchronous communication mechanism</strong> hai jisme:</p>
+    <ul style="margin-top:8px; padding-left:18px;">
+      <li><strong style="color:#e2e8f0">Producer</strong> — message bhejta hai queue mein (sender)</li>
+      <li><strong style="color:#e2e8f0">Queue</strong> — messages store karta hai jab tak consumer ready na ho</li>
+      <li><strong style="color:#e2e8f0">Consumer</strong> — queue se messages leta hai aur process karta hai</li>
+    </ul>
+    <p style="margin-top:10px;">Producer aur Consumer ek doosre ke baare mein <strong style="color:#ff6600">kuch nahi jaante</strong> — yahi decoupling hai.</p>
+  </div>
+
+  <div class="g2" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-title">🎯 Real-World Use Cases</div>
+      <ul>
+        <li><strong style="color:#ff6600">Email/SMS notifications</strong> — user signup pe welcome email</li>
+        <li><strong style="color:#ff6600">Order processing</strong> — e-commerce mein payment → inventory → shipping</li>
+        <li><strong style="color:#ff6600">Image processing</strong> — upload ke baad thumbnail generation</li>
+        <li><strong style="color:#ff6600">Log aggregation</strong> — distributed services ke logs centralize karna</li>
+        <li><strong style="color:#ff6600">Event sourcing</strong> — microservices events broadcast karna</li>
+        <li><strong style="color:#ff6600">Rate limiting</strong> — third-party API calls control karna</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 RabbitMQ vs Alternatives</div>
+      <table style="margin:0">
+        <tr><th>Feature</th><th>RabbitMQ</th><th>Kafka</th><th>Redis Pub/Sub</th></tr>
+        <tr><td>Persistence</td><td style="color:#4ade80">✓ Durable</td><td style="color:#4ade80">✓ Log-based</td><td style="color:#ff4466">✗ In-memory</td></tr>
+        <tr><td>Ordering</td><td style="color:#fbbf24">Per Queue</td><td style="color:#4ade80">Per Partition</td><td style="color:#ff4466">Best effort</td></tr>
+        <tr><td>Routing</td><td style="color:#4ade80">✓ Flexible</td><td style="color:#fbbf24">Topic only</td><td style="color:#fbbf24">Channel only</td></tr>
+        <tr><td>Best for</td><td>Task queues</td><td>Event stream</td><td>Real-time notif</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: AMQP & CORE CONCEPTS -->
+<div id="core" class="section">
+  <div class="section-tag">Phase 1 · Section 2</div>
+  <div class="section-title">AMQP Protocol & Core Components</div>
+  <div class="section-sub">RabbitMQ AMQP 0-9-1 protocol use karta hai. Ye components samajhna mandatory hai.</div>
+
+  <!-- DIAGRAM 2 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 2</span>
+      <span class="diagram-title">RabbitMQ Full Architecture — Producer → Exchange → Queue → Consumer</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 320" height="320">
+        <defs>
+          <marker id="a2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a2g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a2b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4d8bff"/></marker>
+        </defs>
+
+        <!-- PRODUCER -->
+        <rect x="20" y="120" width="130" height="80" rx="10" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="85" y="148" text-anchor="middle" fill="#818cf8" font-size="13" font-weight="700">Producer</text>
+        <text x="85" y="166" text-anchor="middle" fill="#64748b" font-size="10">publishes</text>
+        <text x="85" y="182" text-anchor="middle" fill="#64748b" font-size="10">messages</text>
+
+        <!-- Connection arrow -->
+        <line x1="150" y1="160" x2="210" y2="160" stroke="#ff6600" stroke-width="2.5" marker-end="url(#a2)"/>
+        <text x="180" y="152" text-anchor="middle" fill="#ff6600" font-size="9" font-family="JetBrains Mono">AMQP</text>
+
+        <!-- RABBITMQ SERVER BOX -->
+        <rect x="210" y="30" width="700" height="260" rx="14" fill="#0d1117" stroke="#ff6600" stroke-width="2"/>
+        <text x="560" y="58" text-anchor="middle" fill="#ff6600" font-size="14" font-weight="800" font-family="JetBrains Mono">RabbitMQ Server (Broker)</text>
+
+        <!-- Virtual Host label -->
+        <rect x="230" y="70" width="660" height="206" rx="8" fill="#0a0f1a" stroke="#1e3a5f" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="240" y="88" fill="#475569" font-size="10" font-family="JetBrains Mono">Virtual Host (vhost)</text>
+
+        <!-- EXCHANGE -->
+        <rect x="250" y="100" width="160" height="140" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2"/>
+        <text x="330" y="130" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800">Exchange</text>
+        <rect x="268" y="142" width="124" height="22" rx="4" fill="#0d0702" stroke="#ff6600" stroke-width="1"/>
+        <text x="330" y="158" text-anchor="middle" fill="#ff9966" font-size="10">direct / fanout</text>
+        <rect x="268" y="170" width="124" height="22" rx="4" fill="#0d0702" stroke="#ff6600" stroke-width="1"/>
+        <text x="330" y="186" text-anchor="middle" fill="#ff9966" font-size="10">topic / headers</text>
+        <text x="330" y="228" text-anchor="middle" fill="#64748b" font-size="10">Routing logic here</text>
+
+        <!-- BINDING arrows -->
+        <line x1="410" y1="145" x2="470" y2="125" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a2)"/>
+        <line x1="410" y1="170" x2="470" y2="185" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a2)"/>
+        <line x1="410" y1="195" x2="470" y2="245" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a2)"/>
+        <text x="436" y="155" fill="#fbbf24" font-size="9" font-family="JetBrains Mono">binding</text>
+        <text x="436" y="195" fill="#fbbf24" font-size="9" font-family="JetBrains Mono">routing</text>
+        <text x="436" y="235" fill="#fbbf24" font-size="9" font-family="JetBrains Mono">key</text>
+
+        <!-- QUEUES -->
+        <rect x="470" y="95" width="150" height="55" rx="8" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="545" y="120" text-anchor="middle" fill="#4d8bff" font-size="11" font-weight="700">Queue A</text>
+        <text x="545" y="138" text-anchor="middle" fill="#64748b" font-size="9">email.send</text>
+
+        <rect x="470" y="160" width="150" height="55" rx="8" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="545" y="185" text-anchor="middle" fill="#4d8bff" font-size="11" font-weight="700">Queue B</text>
+        <text x="545" y="203" text-anchor="middle" fill="#64748b" font-size="9">sms.send</text>
+
+        <rect x="470" y="225" width="150" height="55" rx="8" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="545" y="250" text-anchor="middle" fill="#4d8bff" font-size="11" font-weight="700">Queue C</text>
+        <text x="545" y="268" text-anchor="middle" fill="#64748b" font-size="9">report.gen</text>
+
+        <!-- CONSUMER arrows -->
+        <line x1="620" y1="122" x2="680" y2="122" stroke="#00e5a0" stroke-width="2" marker-end="url(#a2g)"/>
+        <line x1="620" y1="187" x2="680" y2="187" stroke="#00e5a0" stroke-width="2" marker-end="url(#a2g)"/>
+        <line x1="620" y1="252" x2="680" y2="252" stroke="#00e5a0" stroke-width="2" marker-end="url(#a2g)"/>
+
+        <!-- CONSUMERS -->
+        <rect x="680" y="95" width="155" height="55" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="757" y="120" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Consumer 1</text>
+        <text x="757" y="138" text-anchor="middle" fill="#64748b" font-size="9">Email Worker</text>
+
+        <rect x="680" y="160" width="155" height="55" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="757" y="185" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Consumer 2</text>
+        <text x="757" y="203" text-anchor="middle" fill="#64748b" font-size="9">SMS Worker</text>
+
+        <rect x="680" y="225" width="155" height="55" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="757" y="250" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Consumer 3</text>
+        <text x="757" y="268" text-anchor="middle" fill="#64748b" font-size="9">Report Worker</text>
+
+        <!-- ACK arrows back -->
+        <line x1="910" y1="160" x2="960" y2="160" stroke="#00e5a0" stroke-width="2.5" marker-end="url(#a2g)"/>
+        <text x="932" y="152" fill="#00e5a0" font-size="9" font-family="JetBrains Mono">ACK</text>
+
+        <!-- CONSUMER -->
+        <rect x="960" y="120" width="120" height="80" rx="10" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="1020" y="148" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Consumer</text>
+        <text x="1020" y="166" text-anchor="middle" fill="#64748b" font-size="10">processes</text>
+        <text x="1020" y="182" text-anchor="middle" fill="#64748b" font-size="10">& ACKs</text>
+
+        <!-- Labels bottom -->
+        <text x="85" y="305" text-anchor="middle" fill="#475569" font-size="10">①</text>
+        <text x="330" y="305" text-anchor="middle" fill="#475569" font-size="10">② Routes by type</text>
+        <text x="545" y="305" text-anchor="middle" fill="#475569" font-size="10">③ Stores msgs</text>
+        <text x="757" y="305" text-anchor="middle" fill="#475569" font-size="10">④ Processes</text>
+        <text x="1020" y="305" text-anchor="middle" fill="#475569" font-size="10">⑤ Confirms</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-title">📤 Producer</div>
+      <p>Application jo messages publish karta hai RabbitMQ ko. Producer ko queue ka pata nahi hota — woh sirf Exchange ko message bhejta hai ek <strong style="color:#ff6600">routing key</strong> ke saath.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🔀 Exchange</div>
+      <p>Messages receive karta hai producers se aur decide karta hai ki message kaunsi queue(s) mein jaayega. Routing rules exchange type par depend karte hain.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📦 Queue</div>
+      <p>Message store karne ki jagah. FIFO order. Multiple consumers ek queue se le sakte hain. <strong style="color:#ff6600">Durable</strong> queue server restart ke baad bhi survive karta hai.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🔗 Binding</div>
+      <p>Exchange aur Queue ke beech ka link. Binding key define karta hai ki kaunsa message kaunsi queue mein jaayega. Ye routing table ki tarah hai.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📥 Consumer</div>
+      <p>Queue se messages consume karta hai. Message process karne ke baad <strong style="color:#ff6600">ACK</strong> (acknowledgement) bhejta hai. Bina ACK ke message queue mein wapas aa jaata hai.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🌐 Virtual Host</div>
+      <p>Logical isolation — ek RabbitMQ server pe multiple isolated environments. Alag-alag teams ya applications ke liye use hota hai. Default vhost <code style="color:#ff6600">/</code> hota hai.</p>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-title">💡 KEY INSIGHT: Connection vs Channel</div>
+    <p><strong style="color:#e2e8f0">Connection</strong> = TCP connection to RabbitMQ (expensive — ek application ke liye ek). <strong style="color:#e2e8f0">Channel</strong> = Lightweight virtual connection INSIDE a TCP connection (multiple per connection — har thread ke liye alag channel banao). Ye AMQP ka important optimization hai.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: EXCHANGES -->
+<div id="exchanges" class="section">
+  <div class="section-tag">Phase 1 · Section 3</div>
+  <div class="section-title">Exchange Types — Routing Ki Duniya</div>
+  <div class="section-sub">4 exchange types hain — in sab ka use case alag hai. FAANG interviews mein ye zaroor poochha jaata hai.</div>
+
+  <div class="exchange-grid">
+    <div class="ex-card ex-direct">
+      <div class="ex-name">1. Direct Exchange</div>
+      <p>Routing key exact match hoti hai binding key se. Ek specific queue ko message bheja jaata hai. Simple 1-to-1 routing.</p>
+      <div class="ex-routing">routing_key == binding_key</div>
+      <p style="margin-top:8px; font-size:11px; color:#475569">Use: Task queues, specific worker assignment, RPC pattern</p>
+    </div>
+    <div class="ex-card ex-fanout">
+      <div class="ex-name">2. Fanout Exchange</div>
+      <p>Routing key IGNORE karta hai. Message <strong>sabhi</strong> bound queues mein bheja jaata hai. Pure broadcast.</p>
+      <div class="ex-routing">routing_key ignored — all queues get it</div>
+      <p style="margin-top:8px; font-size:11px; color:#475569">Use: Notifications, cache invalidation, event broadcasting</p>
+    </div>
+    <div class="ex-card ex-topic">
+      <div class="ex-name">3. Topic Exchange</div>
+      <p>Routing key pattern match karta hai <code>*</code> (one word) aur <code>#</code> (zero or more words) wildcards se. Most flexible.</p>
+      <div class="ex-routing">logs.* matches logs.error, logs.info</div>
+      <p style="margin-top:8px; font-size:11px; color:#475569">Use: Microservices events, complex routing, logs by severity</p>
+    </div>
+    <div class="ex-card ex-headers">
+      <div class="ex-name">4. Headers Exchange</div>
+      <p>Routing key ki jagah message headers use karta hai matching ke liye. <code>x-match: all</code> ya <code>any</code>. Least used.</p>
+      <div class="ex-routing">match on headers instead of routing key</div>
+      <p style="margin-top:8px; font-size:11px; color:#475569">Use: Complex attribute-based routing, multi-criteria filtering</p>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 3 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 3</span>
+      <span class="diagram-title">Topic Exchange — Pattern Matching with * and #</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 260" height="260">
+        <defs>
+          <marker id="a3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ffc040"/></marker>
+          <marker id="a3g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4ade80"/></marker>
+          <marker id="a3r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff4466"/></marker>
+        </defs>
+
+        <!-- Producer -->
+        <rect x="20" y="100" width="110" height="60" rx="8" fill="#0a0c1a" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="75" y="127" text-anchor="middle" fill="#818cf8" font-size="11" font-weight="700">Producer</text>
+        <text x="75" y="145" text-anchor="middle" fill="#64748b" font-size="9">routing_key:</text>
+        <text x="75" y="158" text-anchor="middle" fill="#64748b" font-size="9">logs.error.db</text>
+
+        <line x1="130" y1="130" x2="190" y2="130" stroke="#ffc040" stroke-width="2" marker-end="url(#a3)"/>
+
+        <!-- Topic Exchange -->
+        <rect x="190" y="75" width="160" height="110" rx="10" fill="#1a1000" stroke="#ffc040" stroke-width="2"/>
+        <text x="270" y="103" text-anchor="middle" fill="#ffc040" font-size="12" font-weight="700">Topic Exchange</text>
+        <text x="270" y="121" text-anchor="middle" fill="#64748b" font-size="10">*  = one word</text>
+        <text x="270" y="137" text-anchor="middle" fill="#64748b" font-size="10">#  = zero or more</text>
+        <text x="270" y="155" text-anchor="middle" fill="#ffc040" font-size="10">key: logs.error.db</text>
+        <text x="270" y="175" text-anchor="middle" fill="#64748b" font-size="9">routing_key matches →</text>
+
+        <!-- Bindings and Queues -->
+        <!-- Match 1: logs.#  ✓ -->
+        <line x1="350" y1="100" x2="430" y2="60" stroke="#4ade80" stroke-width="2" marker-end="url(#a3g)"/>
+        <rect x="430" y="35" width="180" height="50" rx="7" fill="#030c06" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="520" y="57" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Queue: all-logs</text>
+        <text x="520" y="74" text-anchor="middle" fill="#64748b" font-size="10">binding: logs.# ✓ MATCHES</text>
+
+        <!-- Match 2: logs.*.db ✓ -->
+        <line x1="350" y1="120" x2="430" y2="120" stroke="#4ade80" stroke-width="2" marker-end="url(#a3g)"/>
+        <rect x="430" y="96" width="180" height="50" rx="7" fill="#030c06" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="520" y="118" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Queue: db-errors</text>
+        <text x="520" y="135" text-anchor="middle" fill="#64748b" font-size="10">binding: logs.*.db ✓ MATCHES</text>
+
+        <!-- No match: logs.info.* ✗ -->
+        <line x1="350" y1="145" x2="430" y2="178" stroke="#ff4466" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <rect x="430" y="156" width="180" height="50" rx="7" fill="#0c0505" stroke="#7f1d1d" stroke-width="1.5"/>
+        <text x="520" y="178" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">Queue: info-only</text>
+        <text x="520" y="195" text-anchor="middle" fill="#64748b" font-size="10">binding: logs.info.* ✗ NO MATCH</text>
+
+        <!-- Consumer arrows -->
+        <line x1="610" y1="60" x2="670" y2="60" stroke="#00e5a0" stroke-width="2" marker-end="url(#a3g)"/>
+        <rect x="670" y="38" width="120" height="44" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="730" y="57" text-anchor="middle" fill="#4ade80" font-size="11">Log Aggregator</text>
+        <text x="730" y="74" text-anchor="middle" fill="#64748b" font-size="9">receives message</text>
+
+        <line x1="610" y1="121" x2="670" y2="121" stroke="#00e5a0" stroke-width="2" marker-end="url(#a3g)"/>
+        <rect x="670" y="98" width="120" height="44" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="730" y="117" text-anchor="middle" fill="#4ade80" font-size="11">DB Alert Worker</text>
+        <text x="730" y="134" text-anchor="middle" fill="#64748b" font-size="9">receives message</text>
+
+        <rect x="670" y="156" width="120" height="44" rx="7" fill="#0c0505" stroke="#7f1d1d" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="730" y="175" text-anchor="middle" fill="#f87171" font-size="11">Info-Only Queue</text>
+        <text x="730" y="192" text-anchor="middle" fill="#64748b" font-size="9">skipped ✗</text>
+
+        <!-- Summary -->
+        <text x="840" y="80" fill="#94a3b8" font-size="11" font-weight="700">Routing key: logs.error.db</text>
+        <text x="840" y="100" fill="#4ade80" font-size="11">✓ logs.#         → matches</text>
+        <text x="840" y="118" fill="#4ade80" font-size="11">✓ logs.*.db      → matches</text>
+        <text x="840" y="136" fill="#ff4466" font-size="11">✗ logs.info.*    → no match</text>
+        <text x="840" y="160" fill="#64748b" font-size="10" font-style="italic">* = exactly one segment</text>
+        <text x="840" y="176" fill="#64748b" font-size="10" font-style="italic"># = zero or more segments</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: SETUP + FIRST CODE -->
+<div id="setup" class="section">
+  <div class="section-tag">Phase 1 · Section 4</div>
+  <div class="section-title">Setup & First Working Code</div>
+  <div class="section-sub">Docker se RabbitMQ chalao aur Node.js mein first producer-consumer banao.</div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">BASH</span>
+      <span class="code-desc">RabbitMQ Docker setup (recommended for development)</span>
+    </div>
+    <div class="code-body"><pre><span class="cm"># RabbitMQ with Management UI (port 5672 = AMQP, 15672 = Admin UI)</span>
+docker run -d \
+  --name rabbitmq \
+  -p <span class="num">5672</span>:<span class="num">5672</span> \
+  -p <span class="num">15672</span>:<span class="num">15672</span> \
+  -e RABBITMQ_DEFAULT_USER=admin \
+  -e RABBITMQ_DEFAULT_PASS=admin123 \
+  rabbitmq:<span class="num">3</span>-management
+
+<span class="cm"># Admin UI: http://localhost:15672 (admin/admin123)</span>
+<span class="cm"># AMQP URL: amqp://admin:admin123@localhost:5672</span>
+
+<span class="cm"># Node.js mein amqplib install karo</span>
+npm install amqplib</pre></div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">NODE.JS</span>
+      <span class="code-desc">producer.js — Message publish karna</span>
+    </div>
+    <div class="code-body"><pre><span class="kw">const</span> amqp = <span class="fn">require</span>(<span class="str">'amqplib'</span>);
+
+<span class="kw">async function</span> <span class="fn">sendMessage</span>() {
+  <span class="cm">// Step 1: Connection establish karo</span>
+  <span class="kw">const</span> connection = <span class="kw">await</span> amqp.<span class="fn">connect</span>(<span class="str">'amqp://admin:admin123@localhost:5672'</span>);
+
+  <span class="cm">// Step 2: Channel banao (lightweight, connection ke andar)</span>
+  <span class="kw">const</span> channel = <span class="kw">await</span> connection.<span class="fn">createChannel</span>();
+
+  <span class="cm">// Step 3: Queue declare karo (idempotent — agar exist kare toh kuch nahi hoga)</span>
+  <span class="kw">const</span> queueName = <span class="str">'task_queue'</span>;
+  <span class="kw">await</span> channel.<span class="fn">assertQueue</span>(queueName, {
+    durable: <span class="kw">true</span>  <span class="cm">// Server restart ke baad bhi queue survive karegi</span>
+  });
+
+  <span class="cm">// Step 4: Message publish karo</span>
+  <span class="kw">const</span> message = { userId: <span class="num">123</span>, email: <span class="str">'rajesh@gmail.com'</span>, template: <span class="str">'welcome'</span> };
+  <span class="kw">const</span> msgBuffer = Buffer.<span class="fn">from</span>(JSON.<span class="fn">stringify</span>(message));
+
+  channel.<span class="fn">sendToQueue</span>(queueName, msgBuffer, {
+    persistent: <span class="kw">true</span>   <span class="cm">// Message disk pe save hoga (not lost on crash)</span>
+  });
+
+  console.<span class="fn">log</span>(<span class="str">'✅ Message sent:'</span>, message);
+
+  <span class="cm">// Step 5: Cleanup (production mein connection reuse karo)</span>
+  <span class="kw">setTimeout</span>(() => {
+    connection.<span class="fn">close</span>();
+    process.<span class="fn">exit</span>(<span class="num">0</span>);
+  }, <span class="num">500</span>);
+}
+
+<span class="fn">sendMessage</span>().<span class="fn">catch</span>(console.error);</pre></div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">NODE.JS</span>
+      <span class="code-desc">consumer.js — Messages consume karna with proper ACK</span>
+    </div>
+    <div class="code-body"><pre><span class="kw">const</span> amqp = <span class="fn">require</span>(<span class="str">'amqplib'</span>);
+
+<span class="kw">async function</span> <span class="fn">startConsumer</span>() {
+  <span class="kw">const</span> connection = <span class="kw">await</span> amqp.<span class="fn">connect</span>(<span class="str">'amqp://admin:admin123@localhost:5672'</span>);
+  <span class="kw">const</span> channel   = <span class="kw">await</span> connection.<span class="fn">createChannel</span>();
+
+  <span class="kw">const</span> queueName = <span class="str">'task_queue'</span>;
+  <span class="kw">await</span> channel.<span class="fn">assertQueue</span>(queueName, { durable: <span class="kw">true</span> });
+
+  <span class="cm">// IMPORTANT: Ek baar mein sirf 1 message process karo</span>
+  <span class="cm">// Jab tak ACK na aaye, next message mat lo</span>
+  channel.<span class="fn">prefetch</span>(<span class="num">1</span>);
+
+  console.<span class="fn">log</span>(<span class="str">'🐰 Waiting for messages...'</span>);
+
+  channel.<span class="fn">consume</span>(queueName, <span class="kw">async</span> (msg) => {
+    <span class="kw">if</span> (msg === <span class="kw">null</span>) <span class="kw">return</span>; <span class="cm">// Consumer cancelled</span>
+
+    <span class="kw">const</span> data = JSON.<span class="fn">parse</span>(msg.content.<span class="fn">toString</span>());
+    console.<span class="fn">log</span>(<span class="str">'📨 Received:'</span>, data);
+
+    <span class="kw">try</span> {
+      <span class="cm">// Actual kaam karo (email send, DB write, etc.)</span>
+      <span class="kw">await</span> <span class="fn">processMessage</span>(data);
+
+      <span class="cm">// ✅ SUCCESS: RabbitMQ ko batao message process ho gaya — delete karo</span>
+      channel.<span class="fn">ack</span>(msg);
+    } <span class="kw">catch</span> (err) {
+      console.error(<span class="str">'❌ Processing failed:'</span>, err);
+
+      <span class="cm">// ❌ FAILURE: Message wapas queue mein daalo (requeue: true)</span>
+      <span class="cm">// requeue: false → message dead-letter queue mein jaayega</span>
+      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">true</span>);
+    }
+  }, {
+    noAck: <span class="kw">false</span>  <span class="cm">// Manual ACK mode (ALWAYS use this in production!)</span>
+  });
+}
+
+<span class="kw">async function</span> <span class="fn">processMessage</span>(data) {
+  <span class="cm">// Simulate async work (email send, API call, etc.)</span>
+  <span class="kw">await new Promise</span>(resolve => <span class="fn">setTimeout</span>(resolve, <span class="num">1000</span>));
+  console.<span class="fn">log</span>(<span class="str">`📧 Email sent to ${data.email}`</span>);
+}
+
+<span class="fn">startConsumer</span>().<span class="fn">catch</span>(console.error);</pre></div>
+  </div>
+
+  <div class="warn">
+    <div class="warn-title">⚠️ CRITICAL: noAck: false ALWAYS in Production</div>
+    <p><code style="color:#ff6600">noAck: true</code> matlab message consume hote hi delete ho jaata hai — chahe processing fail ho. Production mein <strong>always</strong> <code style="color:#ff6600">noAck: false</code> use karo aur manually <code>channel.ack(msg)</code> call karo success pe aur <code>channel.nack(msg)</code> failure pe.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PHASE 2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="phase2" class="section">
+  <div class="phase-header phase2">
+    <div class="ph-label">Phase 2 · Advanced</div>
+    <div class="ph-title">Advanced Patterns, Reliability & Production Architecture</div>
+    <div class="ph-desc">Ab hum production-grade concepts cover karenge — jo FAANG mein actually use hote hain. Dead Letter Queues, RPC pattern, Pub/Sub, Clustering, Prefetch tuning, aur real-world architectures.</div>
+    <div class="ph-topics">
+      <span class="ph-topic">Dead Letter Queue</span>
+      <span class="ph-topic">RPC Pattern</span>
+      <span class="ph-topic">Pub/Sub</span>
+      <span class="ph-topic">Priority Queue</span>
+      <span class="ph-topic">Clustering & HA</span>
+      <span class="ph-topic">Prefetch & Backpressure</span>
+      <span class="ph-topic">Connection Pooling</span>
+      <span class="ph-topic">Retry with Backoff</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: PATTERNS -->
+<div id="patterns" class="section">
+  <div class="section-tag">Phase 2 · Section 1</div>
+  <div class="section-title">Messaging Patterns</div>
+  <div class="section-sub">Ye patterns FAANG system design mein directly poochhe jaate hain.</div>
+
+  <!-- DIAGRAM 4 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 4</span>
+      <span class="diagram-title">Work Queue Pattern — Multiple Workers, Load Distribution</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 220" height="220">
+        <defs>
+          <marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a4g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+        </defs>
+
+        <!-- Producer -->
+        <rect x="20" y="80" width="110" height="60" rx="8" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="75" y="108" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">Producer</text>
+        <text x="75" y="128" text-anchor="middle" fill="#64748b" font-size="10">sends tasks</text>
+
+        <line x1="130" y1="110" x2="190" y2="110" stroke="#ff6600" stroke-width="2.5" marker-end="url(#a4)"/>
+
+        <!-- Queue with messages -->
+        <rect x="190" y="55" width="280" height="110" rx="10" fill="#0d1117" stroke="#ff6600" stroke-width="2"/>
+        <text x="330" y="78" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="700">Task Queue</text>
+        <!-- Messages in queue -->
+        <rect x="208" y="88" width="42" height="30" rx="4" fill="#ff6600" opacity="0.8"/>
+        <text x="229" y="108" text-anchor="middle" fill="#000" font-size="10" font-weight="700">T1</text>
+        <rect x="257" y="88" width="42" height="30" rx="4" fill="#ff6600" opacity="0.65"/>
+        <text x="278" y="108" text-anchor="middle" fill="#000" font-size="10" font-weight="700">T2</text>
+        <rect x="306" y="88" width="42" height="30" rx="4" fill="#ff6600" opacity="0.5"/>
+        <text x="327" y="108" text-anchor="middle" fill="#000" font-size="10" font-weight="700">T3</text>
+        <rect x="355" y="88" width="42" height="30" rx="4" fill="#ff6600" opacity="0.35"/>
+        <text x="376" y="108" text-anchor="middle" fill="#000" font-size="10" font-weight="700">T4</text>
+        <text x="330" y="148" text-anchor="middle" fill="#64748b" font-size="10">Round-robin delivery (prefetch=1)</text>
+
+        <!-- Workers -->
+        <line x1="470" y1="90" x2="540" y2="65" stroke="#00e5a0" stroke-width="2" marker-end="url(#a4g)"/>
+        <line x1="470" y1="110" x2="540" y2="110" stroke="#00e5a0" stroke-width="2" marker-end="url(#a4g)"/>
+        <line x1="470" y1="130" x2="540" y2="155" stroke="#00e5a0" stroke-width="2" marker-end="url(#a4g)"/>
+
+        <rect x="540" y="38" width="140" height="50" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="610" y="61" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Worker 1</text>
+        <text x="610" y="78" text-anchor="middle" fill="#ff6600" font-size="10">processing T1...</text>
+
+        <rect x="540" y="85" width="140" height="50" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="610" y="108" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Worker 2</text>
+        <text x="610" y="125" text-anchor="middle" fill="#64748b" font-size="10">idle → gets T2</text>
+
+        <rect x="540" y="130" width="140" height="50" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="610" y="153" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Worker 3</text>
+        <text x="610" y="170" text-anchor="middle" fill="#64748b" font-size="10">idle → gets T3</text>
+
+        <!-- Key points -->
+        <rect x="720" y="38" width="360" height="144" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="900" y="62" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="700">Work Queue Key Rules</text>
+        <text x="738" y="84" fill="#ff6600" font-size="11">• prefetch(1)</text>
+        <text x="760" y="100" fill="#64748b" font-size="10">Worker ek baar mein 1 hi message lega</text>
+        <text x="738" y="118" fill="#ff6600" font-size="11">• Round-robin by default</text>
+        <text x="760" y="134" fill="#64748b" font-size="10">T1→W1, T2→W2, T3→W3</text>
+        <text x="738" y="152" fill="#ff6600" font-size="11">• Fair dispatch</text>
+        <text x="760" y="168" fill="#64748b" font-size="10">Slow worker ko naya kaam nahi milega</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 5 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 5</span>
+      <span class="diagram-title">Pub/Sub Pattern — Fanout Exchange, Multiple Subscribers</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 260" height="260">
+        <defs>
+          <marker id="a5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a5g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a5b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4d8bff"/></marker>
+        </defs>
+
+        <!-- Event source -->
+        <rect x="20" y="110" width="130" height="60" rx="8" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="85" y="135" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">Order Service</text>
+        <text x="85" y="155" text-anchor="middle" fill="#64748b" font-size="10">order.placed event</text>
+
+        <line x1="150" y1="140" x2="210" y2="140" stroke="#ff6600" stroke-width="2.5" marker-end="url(#a5)"/>
+
+        <!-- Fanout Exchange -->
+        <rect x="210" y="90" width="160" height="100" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2.5"/>
+        <text x="290" y="125" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800">Fanout</text>
+        <text x="290" y="143" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800">Exchange</text>
+        <text x="290" y="172" text-anchor="middle" fill="#64748b" font-size="10">broadcasts to ALL queues</text>
+
+        <!-- All queues get copy -->
+        <line x1="370" y1="120" x2="430" y2="50" stroke="#ff6600" stroke-width="2" marker-end="url(#a5)"/>
+        <line x1="370" y1="135" x2="430" y2="140" stroke="#ff6600" stroke-width="2" marker-end="url(#a5)"/>
+        <line x1="370" y1="150" x2="430" y2="230" stroke="#ff6600" stroke-width="2" marker-end="url(#a5)"/>
+
+        <!-- Queues -->
+        <rect x="430" y="22" width="140" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="500" y="44" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">inventory.queue</text>
+        <text x="500" y="60" text-anchor="middle" fill="#64748b" font-size="9">copy of order event</text>
+
+        <rect x="430" y="116" width="140" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="500" y="138" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">email.queue</text>
+        <text x="500" y="154" text-anchor="middle" fill="#64748b" font-size="9">copy of order event</text>
+
+        <rect x="430" y="207" width="140" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="500" y="229" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">analytics.queue</text>
+        <text x="500" y="245" text-anchor="middle" fill="#64748b" font-size="9">copy of order event</text>
+
+        <!-- Consumers -->
+        <line x1="570" y1="46" x2="640" y2="46" stroke="#00e5a0" stroke-width="2" marker-end="url(#a5g)"/>
+        <rect x="640" y="22" width="155" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="717" y="44" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Inventory Service</text>
+        <text x="717" y="60" text-anchor="middle" fill="#64748b" font-size="9">reduces stock</text>
+
+        <line x1="570" y1="140" x2="640" y2="140" stroke="#00e5a0" stroke-width="2" marker-end="url(#a5g)"/>
+        <rect x="640" y="116" width="155" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="717" y="138" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Email Service</text>
+        <text x="717" y="154" text-anchor="middle" fill="#64748b" font-size="9">sends confirmation</text>
+
+        <line x1="570" y1="231" x2="640" y2="231" stroke="#00e5a0" stroke-width="2" marker-end="url(#a5g)"/>
+        <rect x="640" y="207" width="155" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="717" y="229" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Analytics Service</text>
+        <text x="717" y="245" text-anchor="middle" fill="#64748b" font-size="9">updates dashboard</text>
+
+        <!-- Key insight -->
+        <rect x="840" y="80" width="240" height="120" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="960" y="104" text-anchor="middle" fill="#ff6600" font-size="11" font-weight="700">Pub/Sub Key Point</text>
+        <text x="855" y="124" fill="#64748b" font-size="10">Each subscriber gets its</text>
+        <text x="855" y="140" fill="#64748b" font-size="10">OWN COPY of the message.</text>
+        <text x="855" y="162" fill="#64748b" font-size="10">Order Service doesn't know</text>
+        <text x="855" y="178" fill="#64748b" font-size="10">about Inventory/Email/Analytics</text>
+        <text x="855" y="194" fill="#00e5a0" font-size="10" font-weight="700">= Loose coupling ✓</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- RPC PATTERN CODE -->
+  <div style="margin-top:32px;">
+    <h3 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:16px;">RPC (Remote Procedure Call) Pattern</h3>
+    <p style="color:var(--muted); font-size:13px; margin-bottom:16px;">Jab aapko response chahiye message ke liye — synchronous feel with async backend. Diagram 6 dekho.</p>
+  </div>
+
+  <!-- DIAGRAM 6 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 6</span>
+      <span class="diagram-title">RPC Pattern — Request/Reply with Correlation ID</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 240" height="240">
+        <defs>
+          <marker id="a6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a6g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a6p" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a855f7"/></marker>
+        </defs>
+
+        <!-- CLIENT -->
+        <rect x="20" y="80" width="140" height="90" rx="10" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="90" y="108" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">RPC Client</text>
+        <text x="90" y="126" text-anchor="middle" fill="#64748b" font-size="10">correlation_id: abc123</text>
+        <text x="90" y="142" text-anchor="middle" fill="#64748b" font-size="10">reply_to: amq.gen-xyz</text>
+        <text x="90" y="158" text-anchor="middle" fill="#64748b" font-size="10">(temp reply queue)</text>
+
+        <!-- Step 1: Request -->
+        <line x1="160" y1="100" x2="290" y2="100" stroke="#ff6600" stroke-width="2" marker-end="url(#a6)"/>
+        <text x="225" y="92" text-anchor="middle" fill="#ff6600" font-size="10">① request</text>
+
+        <!-- RPC Queue -->
+        <rect x="290" y="68" width="160" height="70" rx="8" fill="#1a0d00" stroke="#ff6600" stroke-width="2"/>
+        <text x="370" y="98" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="700">rpc_queue</text>
+        <text x="370" y="118" text-anchor="middle" fill="#64748b" font-size="10">correlation: abc123</text>
+        <text x="370" y="132" text-anchor="middle" fill="#64748b" font-size="10">reply_to: amq.gen-xyz</text>
+
+        <line x1="450" y1="103" x2="540" y2="103" stroke="#00e5a0" stroke-width="2" marker-end="url(#a6g)"/>
+        <text x="494" y="95" text-anchor="middle" fill="#00e5a0" font-size="10">② consume</text>
+
+        <!-- SERVER -->
+        <rect x="540" y="68" width="160" height="70" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="620" y="97" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">RPC Server</text>
+        <text x="620" y="115" text-anchor="middle" fill="#64748b" font-size="10">processes request</text>
+        <text x="620" y="131" text-anchor="middle" fill="#64748b" font-size="10">calculates result</text>
+
+        <!-- Step 3: Reply -->
+        <line x1="620" y1="138" x2="620" y2="175" stroke="#a855f7" stroke-width="2"/>
+        <line x1="620" y1="175" x2="200" y2="175" stroke="#a855f7" stroke-width="2"/>
+        <line x1="200" y1="175" x2="160" y2="155" stroke="#a855f7" stroke-width="2" marker-end="url(#a6p)"/>
+        <text x="410" y="168" text-anchor="middle" fill="#a855f7" font-size="10">③ reply to amq.gen-xyz with correlation_id: abc123</text>
+
+        <!-- Reply Queue -->
+        <rect x="290" y="160" width="160" height="55" rx="8" fill="#150b2a" stroke="#a855f7" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="370" y="186" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700">reply queue</text>
+        <text x="370" y="202" text-anchor="middle" fill="#64748b" font-size="9">(temporary, auto-delete)</text>
+
+        <!-- Client correlation check -->
+        <text x="90" y="198" text-anchor="middle" fill="#818cf8" font-size="10">④ match correlation_id</text>
+        <text x="90" y="212" text-anchor="middle" fill="#4ade80" font-size="10">→ return result ✓</text>
+
+        <!-- Why correlation ID -->
+        <rect x="760" y="60" width="320" height="140" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="920" y="84" text-anchor="middle" fill="#a855f7" font-size="12" font-weight="700">Why Correlation ID?</text>
+        <text x="775" y="106" fill="#64748b" font-size="11">Client multiple requests bhejna</text>
+        <text x="775" y="122" fill="#64748b" font-size="11">chahta hai simultaneously.</text>
+        <text x="775" y="146" fill="#ff6600" font-size="11">correlation_id = UUID per request</text>
+        <text x="775" y="164" fill="#64748b" font-size="11">Response aaya toh client match</text>
+        <text x="775" y="180" fill="#64748b" font-size="11">karta hai — sahi request ko</text>
+        <text x="775" y="196" fill="#64748b" font-size="11">resolve karta hai.</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">NODE.JS</span>
+      <span class="code-desc">rpc-client.js — Request bhejo aur response lo</span>
+    </div>
+    <div class="code-body"><pre><span class="kw">const</span> amqp = <span class="fn">require</span>(<span class="str">'amqplib'</span>);
+<span class="kw">const</span> { v4: uuidv4 } = <span class="fn">require</span>(<span class="str">'uuid'</span>);
+
+<span class="kw">class</span> <span class="cls">RPCClient</span> {
+  <span class="kw">constructor</span>() {
+    <span class="kw">this</span>.connection = <span class="kw">null</span>;
+    <span class="kw">this</span>.channel    = <span class="kw">null</span>;
+    <span class="kw">this</span>.replyQueue = <span class="kw">null</span>;
+    <span class="kw">this</span>.pending    = <span class="kw">new</span> <span class="cls">Map</span>(); <span class="cm">// correlationId → { resolve, reject }</span>
+  }
+
+  <span class="kw">async</span> <span class="fn">connect</span>() {
+    <span class="kw">this</span>.connection = <span class="kw">await</span> amqp.<span class="fn">connect</span>(<span class="str">'amqp://localhost'</span>);
+    <span class="kw">this</span>.channel    = <span class="kw">await</span> <span class="kw">this</span>.connection.<span class="fn">createChannel</span>();
+
+    <span class="cm">// Temporary exclusive reply queue (auto-deleted when client disconnects)</span>
+    <span class="kw">const</span> q = <span class="kw">await</span> <span class="kw">this</span>.channel.<span class="fn">assertQueue</span>(<span class="str">''</span>, {
+      exclusive: <span class="kw">true</span>,   <span class="cm">// Only this connection can use it</span>
+      autoDelete: <span class="kw">true</span>   <span class="cm">// Delete when connection closes</span>
+    });
+    <span class="kw">this</span>.replyQueue = q.queue; <span class="cm">// amq.gen-XYZ (random name)</span>
+
+    <span class="cm">// Listen for replies on this temp queue</span>
+    <span class="kw">this</span>.channel.<span class="fn">consume</span>(<span class="kw">this</span>.replyQueue, (msg) => {
+      <span class="kw">const</span> corrId = msg.properties.correlationId;
+      <span class="kw">const</span> handler = <span class="kw">this</span>.pending.<span class="fn">get</span>(corrId);
+      <span class="kw">if</span> (handler) {
+        <span class="kw">const</span> result = JSON.<span class="fn">parse</span>(msg.content.<span class="fn">toString</span>());
+        handler.<span class="fn">resolve</span>(result); <span class="cm">// Promise resolve karo !</span>
+        <span class="kw">this</span>.pending.<span class="fn">delete</span>(corrId);
+      }
+    }, { noAck: <span class="kw">true</span> });
+  }
+
+  <span class="fn">call</span>(rpcQueue, payload, timeout = <span class="num">10000</span>) {
+    <span class="kw">return new</span> <span class="cls">Promise</span>((resolve, reject) => {
+      <span class="kw">const</span> correlationId = <span class="fn">uuidv4</span>();
+
+      <span class="cm">// Timeout handling</span>
+      <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() => {
+        <span class="kw">this</span>.pending.<span class="fn">delete</span>(correlationId);
+        <span class="fn">reject</span>(<span class="kw">new</span> <span class="cls">Error</span>(<span class="str">'RPC timeout'</span>));
+      }, timeout);
+
+      <span class="kw">this</span>.pending.<span class="fn">set</span>(correlationId, {
+        resolve: (val) => { <span class="fn">clearTimeout</span>(timer); <span class="fn">resolve</span>(val); },
+        reject
+      });
+
+      <span class="kw">this</span>.channel.<span class="fn">sendToQueue</span>(rpcQueue, Buffer.<span class="fn">from</span>(JSON.<span class="fn">stringify</span>(payload)), {
+        correlationId,                   <span class="cm">// "This is my ID"</span>
+        replyTo: <span class="kw">this</span>.replyQueue         <span class="cm">// "Reply here"</span>
+      });
+    });
+  }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="cls">RPCClient</span>();
+<span class="kw">await</span> client.<span class="fn">connect</span>();
+<span class="kw">const</span> result = <span class="kw">await</span> client.<span class="fn">call</span>(<span class="str">'math.add'</span>, { a: <span class="num">5</span>, b: <span class="num">3</span> });
+console.<span class="fn">log</span>(<span class="str">'Result:'</span>, result); <span class="cm">// { result: 8 }</span></pre></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: RELIABILITY -->
+<div id="reliability" class="section">
+  <div class="section-tag">Phase 2 · Section 2</div>
+  <div class="section-title">Reliability — Dead Letter Queue & Retry</div>
+  <div class="section-sub">Production mein messages kabhi nahi khone chahiye — DLQ is guarantee provide karta hai.</div>
+
+  <!-- DIAGRAM 7 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 7</span>
+      <span class="diagram-title">Dead Letter Queue (DLQ) — Message Lifecycle on Failure</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 280" height="280">
+        <defs>
+          <marker id="a7" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a7r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff4466"/></marker>
+          <marker id="a7g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a7y" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ffc040"/></marker>
+        </defs>
+
+        <!-- Producer -->
+        <rect x="20" y="110" width="100" height="55" rx="8" fill="#0a0c1a" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="70" y="137" text-anchor="middle" fill="#818cf8" font-size="11" font-weight="700">Producer</text>
+        <text x="70" y="153" text-anchor="middle" fill="#64748b" font-size="9">sends msg</text>
+        <line x1="120" y1="137" x2="180" y2="137" stroke="#ff6600" stroke-width="2" marker-end="url(#a7)"/>
+
+        <!-- Main Queue -->
+        <rect x="180" y="80" width="180" height="120" rx="10" fill="#0d1117" stroke="#ff6600" stroke-width="2"/>
+        <text x="270" y="108" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="700">main_queue</text>
+        <text x="270" y="128" text-anchor="middle" fill="#64748b" font-size="9">x-dead-letter-exchange:</text>
+        <text x="270" y="142" text-anchor="middle" fill="#fbbf24" font-size="9">dlx (dead letter exchange)</text>
+        <text x="270" y="158" text-anchor="middle" fill="#64748b" font-size="9">x-message-ttl: 30000ms</text>
+        <text x="270" y="174" text-anchor="middle" fill="#64748b" font-size="9">x-max-retries: 3</text>
+
+        <line x1="360" y1="115" x2="420" y2="100" stroke="#00e5a0" stroke-width="2" marker-end="url(#a7g)"/>
+
+        <!-- Worker -->
+        <rect x="420" y="75" width="140" height="60" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="490" y="100" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Worker</text>
+        <text x="490" y="118" text-anchor="middle" fill="#64748b" font-size="10">processes message</text>
+
+        <!-- Success path -->
+        <text x="490" y="60" text-anchor="middle" fill="#4ade80" font-size="10">✅ Success → ACK → message deleted</text>
+
+        <!-- Failure path -->
+        <line x1="490" y1="135" x2="490" y2="180" stroke="#ff4466" stroke-width="2"/>
+        <text x="510" y="162" fill="#ff4466" font-size="10">❌ NACK (requeue:false)</text>
+        <text x="510" y="175" fill="#64748b" font-size="9">or TTL expired</text>
+        <text x="510" y="188" fill="#64748b" font-size="9">or queue full</text>
+
+        <!-- DLX -->
+        <line x1="490" y1="180" x2="490" y2="210" stroke="#ff4466" stroke-width="2" marker-end="url(#a7r)"/>
+        <rect x="380" y="210" width="160" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="2"/>
+        <text x="460" y="237" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">DLX Exchange</text>
+        <text x="460" y="253" text-anchor="middle" fill="#64748b" font-size="9">dead-letter-exchange</text>
+
+        <line x1="540" y1="237" x2="610" y2="237" stroke="#ff4466" stroke-width="2" marker-end="url(#a7r)"/>
+
+        <!-- DLQ -->
+        <rect x="610" y="210" width="160" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="2"/>
+        <text x="690" y="237" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">dead_letter_queue</text>
+        <text x="690" y="253" text-anchor="middle" fill="#64748b" font-size="9">inspect, alert, re-queue</text>
+
+        <!-- Alert -->
+        <line x1="770" y1="237" x2="840" y2="237" stroke="#ffc040" stroke-width="2" marker-end="url(#a7y)"/>
+        <rect x="840" y="210" width="130" height="55" rx="8" fill="#1f1a05" stroke="#ffc040" stroke-width="1.5"/>
+        <text x="905" y="234" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">Ops Alert</text>
+        <text x="905" y="250" text-anchor="middle" fill="#64748b" font-size="9">Slack/PagerDuty</text>
+
+        <!-- 3 reasons -->
+        <rect x="700" y="40" width="380" height="130" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="890" y="64" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">Message goes to DLQ when:</text>
+        <text x="718" y="84" fill="#64748b" font-size="11">① NACK with requeue: false</text>
+        <text x="718" y="100" fill="#64748b" font-size="11">② Message TTL expires in queue</text>
+        <text x="718" y="116" fill="#64748b" font-size="11">③ Queue length limit exceeded</text>
+        <text x="718" y="140" fill="#fbbf24" font-size="11">DLQ = Safety net for failed msgs</text>
+        <text x="718" y="158" fill="#64748b" font-size="10">Never silently discard messages!</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">NODE.JS</span>
+      <span class="code-desc">Dead Letter Queue Setup + Exponential Backoff Retry</span>
+    </div>
+    <div class="code-body"><pre><span class="kw">const</span> amqp = <span class="fn">require</span>(<span class="str">'amqplib'</span>);
+
+<span class="kw">async function</span> <span class="fn">setupQueuesWithDLQ</span>(channel) {
+  <span class="cm">// Step 1: Dead Letter Exchange declare karo</span>
+  <span class="kw">await</span> channel.<span class="fn">assertExchange</span>(<span class="str">'dlx'</span>, <span class="str">'direct'</span>, { durable: <span class="kw">true</span> });
+
+  <span class="cm">// Step 2: Dead Letter Queue declare karo</span>
+  <span class="kw">await</span> channel.<span class="fn">assertQueue</span>(<span class="str">'dead_letter_queue'</span>, {
+    durable: <span class="kw">true</span>
+  });
+  <span class="kw">await</span> channel.<span class="fn">bindQueue</span>(<span class="str">'dead_letter_queue'</span>, <span class="str">'dlx'</span>, <span class="str">'failed'</span>);
+
+  <span class="cm">// Step 3: Main Queue with DLQ config</span>
+  <span class="kw">await</span> channel.<span class="fn">assertQueue</span>(<span class="str">'email_queue'</span>, {
+    durable: <span class="kw">true</span>,
+    arguments: {
+      <span class="str">'x-dead-letter-exchange'</span>: <span class="str">'dlx'</span>,          <span class="cm">// Failed msgs yahan jaayenge</span>
+      <span class="str">'x-dead-letter-routing-key'</span>: <span class="str">'failed'</span>,    <span class="cm">// Routing key for DLX</span>
+      <span class="str">'x-message-ttl'</span>: <span class="num">300000</span>,                   <span class="cm">// 5 min baad expire → DLQ</span>
+      <span class="str">'x-max-length'</span>: <span class="num">10000</span>                       <span class="cm">// Queue full → oldest → DLQ</span>
+    }
+  });
+}
+
+<span class="cm">// ── CONSUMER with Exponential Backoff Retry ──────────────────</span>
+<span class="kw">async function</span> <span class="fn">consumeWithRetry</span>(channel, msg, handler) {
+  <span class="kw">const</span> data       = JSON.<span class="fn">parse</span>(msg.content.<span class="fn">toString</span>());
+  <span class="kw">const</span> retryCount = (msg.properties.headers?.[<span class="str">'x-retry-count'</span>] || <span class="num">0</span>);
+  <span class="kw">const</span> MAX_RETRIES = <span class="num">3</span>;
+
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="fn">handler</span>(data);
+    channel.<span class="fn">ack</span>(msg);  <span class="cm">// ✅ Success</span>
+
+  } <span class="kw">catch</span> (err) {
+    console.error(<span class="str">`❌ Attempt ${retryCount + 1} failed:`</span>, err.message);
+
+    <span class="kw">if</span> (retryCount < MAX_RETRIES) {
+      <span class="cm">// NACK without requeue — message goes to DLQ (or retry delay queue)</span>
+      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>);
+
+      <span class="cm">// Exponential backoff: 2^retry * 1000ms (1s, 2s, 4s, 8s...)</span>
+      <span class="kw">const</span> delay = Math.<span class="fn">pow</span>(<span class="num">2</span>, retryCount) * <span class="num">1000</span>;
+      console.<span class="fn">log</span>(<span class="str">`🔄 Retrying in ${delay}ms...`</span>);
+
+      <span class="cm">// Re-publish with incremented retry count after delay</span>
+      <span class="fn">setTimeout</span>(() => {
+        channel.<span class="fn">sendToQueue</span>(<span class="str">'email_queue'</span>, msg.content, {
+          persistent: <span class="kw">true</span>,
+          headers: { <span class="str">'x-retry-count'</span>: retryCount + <span class="num">1</span> }
+        });
+      }, delay);
+
+    } <span class="kw">else</span> {
+      <span class="cm">// Max retries exhausted → DLQ mein jaayega</span>
+      console.error(<span class="str">'💀 Max retries exhausted — moving to DLQ'</span>);
+      channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span class="cm">// DLX handle karega</span>
+
+      <span class="cm">// Alert send karo!</span>
+      <span class="kw">await</span> <span class="fn">sendAlert</span>(<span class="str">`Message failed after ${MAX_RETRIES} retries`</span>, data);
+    }
+  }
+}</pre></div>
+  </div>
+
+  <div class="faang">
+    <div class="faang-title">🎯 FAANG Interview: DLQ Questions</div>
+    <ul>
+      <li><strong style="color:#e2e8f0">Q: "Payment message fail ho gayi — kya karoge?"</strong> → DLQ setup karo, retry 3 times with exponential backoff, alert send karo, manual investigation allow karo</li>
+      <li><strong style="color:#e2e8f0">Q: "DLQ vs Retry Queue difference?"</strong> → DLQ = final destination after max retries. Retry queue = delay ke saath same queue mein wapas</li>
+      <li><strong style="color:#e2e8f0">Q: "At-least-once delivery kaise guarantee karte ho?"</strong> → manual ACK, durable queues + persistent messages, idempotent consumers</li>
+      <li><strong style="color:#e2e8f0">Q: "Exactly-once delivery possible hai?"</strong> → RabbitMQ mein not natively. Idempotency key + DB check se achieve karo (consumer side)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: CLUSTERING -->
+<div id="cluster" class="section">
+  <div class="section-tag">Phase 2 · Section 3</div>
+  <div class="section-title">Clustering & High Availability</div>
+  <div class="section-sub">Production mein single node acceptable nahi hai — HA setup zaroori hai.</div>
+
+  <!-- DIAGRAM 8 -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 8</span>
+      <span class="diagram-title">RabbitMQ Cluster with Quorum Queues — High Availability Setup</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 300" height="300">
+        <defs>
+          <marker id="a8" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a8b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4d8bff"/></marker>
+          <marker id="a8g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+        </defs>
+
+        <!-- Load Balancer -->
+        <rect x="20" y="120" width="130" height="60" rx="10" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="85" y="147" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">HAProxy /</text>
+        <text x="85" y="163" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">Load Balancer</text>
+
+        <line x1="150" y1="130" x2="210" y2="80" stroke="#ff6600" stroke-width="2" marker-end="url(#a8)"/>
+        <line x1="150" y1="150" x2="210" y2="150" stroke="#ff6600" stroke-width="2" marker-end="url(#a8)"/>
+        <line x1="150" y1="170" x2="210" y2="220" stroke="#ff6600" stroke-width="2" marker-end="url(#a8)"/>
+
+        <!-- Node 1 (Leader) -->
+        <rect x="210" y="40" width="200" height="90" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2.5"/>
+        <text x="310" y="68" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="800">Node 1 (Leader)</text>
+        <text x="310" y="86" text-anchor="middle" fill="#64748b" font-size="10">rabbit@node1</text>
+        <text x="310" y="104" text-anchor="middle" fill="#64748b" font-size="10">Quorum Queue Master</text>
+        <rect x="222" y="108" width="176" height="18" rx="3" fill="#0d0702"/>
+        <text x="310" y="121" text-anchor="middle" fill="#fbbf24" font-size="9">Erlang Cookie: same on all nodes</text>
+
+        <!-- Node 2 -->
+        <rect x="210" y="150" width="200" height="80" rx="10" fill="#040e1e" stroke="#4d8bff" stroke-width="2"/>
+        <text x="310" y="178" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="700">Node 2 (Follower)</text>
+        <text x="310" y="196" text-anchor="middle" fill="#64748b" font-size="10">rabbit@node2</text>
+        <text x="310" y="214" text-anchor="middle" fill="#64748b" font-size="10">Replicates from Leader</text>
+
+        <!-- Node 3 -->
+        <rect x="210" y="250" width="200" height="80" rx="10" fill="#040e1e" stroke="#4d8bff" stroke-width="2"/>
+        <text x="310" y="278" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="700">Node 3 (Follower)</text>
+        <text x="310" y="296" text-anchor="middle" fill="#64748b" font-size="10">rabbit@node3</text>
+        <text x="310" y="314" text-anchor="middle" fill="#64748b" font-size="9">Quorum = (3/2)+1 = 2 nodes</text>
+
+        <!-- Replication arrows between nodes -->
+        <line x1="310" y1="130" x2="310" y2="150" stroke="#4d8bff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a8b)"/>
+        <line x1="310" y1="230" x2="310" y2="250" stroke="#4d8bff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a8b)"/>
+        <text x="330" y="143" fill="#4d8bff" font-size="9">replicate</text>
+        <text x="330" y="243" fill="#4d8bff" font-size="9">replicate</text>
+
+        <!-- Consumers -->
+        <line x1="410" y1="85" x2="520" y2="85" stroke="#00e5a0" stroke-width="2" marker-end="url(#a8g)"/>
+        <line x1="410" y1="190" x2="520" y2="190" stroke="#00e5a0" stroke-width="2" marker-end="url(#a8g)"/>
+        <line x1="410" y1="290" x2="520" y2="290" stroke="#00e5a0" stroke-width="2" marker-end="url(#a8g)"/>
+
+        <rect x="520" y="55" width="150" height="60" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="595" y="83" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Consumer Pool 1</text>
+        <text x="595" y="100" text-anchor="middle" fill="#64748b" font-size="9">any node can serve</text>
+
+        <rect x="520" y="160" width="150" height="60" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="595" y="188" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Consumer Pool 2</text>
+        <text x="595" y="205" text-anchor="middle" fill="#64748b" font-size="9">any node can serve</text>
+
+        <!-- Failover explanation -->
+        <rect x="720" y="40" width="360" height="230" rx="12" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="900" y="68" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="700">HA Configuration</text>
+        <text x="740" y="94" fill="#64748b" font-size="11">Quorum Queue (RabbitMQ 3.8+):</text>
+        <text x="740" y="110" fill="#fbbf24" font-size="11">• Uses Raft consensus algorithm</text>
+        <text x="740" y="126" fill="#64748b" font-size="10">• 3 nodes = quorum of 2 (N/2+1)</text>
+        <text x="740" y="142" fill="#64748b" font-size="10">• Node 1 crash → Node 2 becomes leader</text>
+        <text x="740" y="158" fill="#64748b" font-size="10">• No data loss (all msgs replicated)</text>
+        <text x="740" y="178" fill="#ff4466" font-size="11">Classic Mirrored Queue (deprecated):</text>
+        <text x="740" y="194" fill="#64748b" font-size="10">• ha-mode: all (sync to all nodes)</text>
+        <text x="740" y="210" fill="#64748b" font-size="10">• Performance issue at scale</text>
+        <text x="740" y="230" fill="#4ade80" font-size="11">Use Quorum Queues in new projects!</text>
+        <text x="740" y="256" fill="#64748b" font-size="10">Min cluster size: 3 (odd number)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">BASH + NODE.JS</span>
+      <span class="code-desc">Docker Compose 3-Node RabbitMQ Cluster + Quorum Queue setup</span>
+    </div>
+    <div class="code-body"><pre><span class="cm"># docker-compose.yml — 3-node RabbitMQ cluster</span>
+<span class="cm"># services:</span>
+<span class="cm">#   rabbit1, rabbit2, rabbit3 — all with same RABBITMQ_ERLANG_COOKIE</span>
+<span class="cm"># After starting: </span>
+<span class="cm"># docker exec rabbit2 rabbitmqctl join_cluster rabbit@rabbit1</span>
+<span class="cm"># docker exec rabbit3 rabbitmqctl join_cluster rabbit@rabbit1</span>
+
+<span class="cm">// Node.js: Quorum Queue declare karo</span>
+<span class="kw">await</span> channel.<span class="fn">assertQueue</span>(<span class="str">'critical_payments'</span>, {
+  durable: <span class="kw">true</span>,
+  arguments: {
+    <span class="str">'x-queue-type'</span>: <span class="str">'quorum'</span>,     <span class="cm">// ← This makes it a Quorum Queue</span>
+    <span class="str">'x-quorum-initial-group-size'</span>: <span class="num">3</span>  <span class="cm">// 3 nodes pe replicate karo</span>
+  }
+});
+
+<span class="cm">// Connection string with multiple nodes (failover)</span>
+<span class="kw">const</span> connection = <span class="kw">await</span> amqp.<span class="fn">connect</span>({
+  hostname: [<span class="str">'rabbit1'</span>, <span class="str">'rabbit2'</span>, <span class="str">'rabbit3'</span>],  <span class="cm">// Try in order</span>
+  port:     <span class="num">5672</span>,
+  username: <span class="str">'admin'</span>,
+  password: <span class="str">'admin123'</span>,
+  heartbeat: <span class="num">60</span>  <span class="cm">// Network issues detect karo</span>
+});</pre></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: ADVANCED -->
+<div id="advanced" class="section">
+  <div class="section-tag">Phase 2 · Section 4</div>
+  <div class="section-title">Advanced Patterns & Production Optimizations</div>
+
+  <!-- DIAGRAM 9: Priority Queue -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 9</span>
+      <span class="diagram-title">Priority Queue — VIP messages pehle process hote hain</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 200" height="200">
+        <defs>
+          <marker id="a9" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a9g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+        </defs>
+
+        <!-- Producers -->
+        <rect x="20" y="30" width="110" height="45" rx="6" fill="#0a0c1a" stroke="#ff4466" stroke-width="1.5"/>
+        <text x="75" y="53" text-anchor="middle" fill="#ff4466" font-size="11" font-weight="700">Premium User</text>
+        <text x="75" y="68" text-anchor="middle" fill="#64748b" font-size="9">priority: 10</text>
+
+        <rect x="20" y="90" width="110" height="45" rx="6" fill="#0a0c1a" stroke="#ffc040" stroke-width="1.5"/>
+        <text x="75" y="113" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">Regular User</text>
+        <text x="75" y="128" text-anchor="middle" fill="#64748b" font-size="9">priority: 5</text>
+
+        <rect x="20" y="150" width="110" height="45" rx="6" fill="#0a0c1a" stroke="#475569" stroke-width="1.5"/>
+        <text x="75" y="173" text-anchor="middle" fill="#64748b" font-size="11" font-weight="700">Free User</text>
+        <text x="75" y="188" text-anchor="middle" fill="#64748b" font-size="9">priority: 1</text>
+
+        <line x1="130" y1="52" x2="200" y2="75" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a9)"/>
+        <line x1="130" y1="112" x2="200" y2="112" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a9)"/>
+        <line x1="130" y1="172" x2="200" y2="150" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a9)"/>
+
+        <!-- Priority Queue (sorted visually) -->
+        <rect x="200" y="40" width="270" height="130" rx="10" fill="#0d1117" stroke="#ff6600" stroke-width="2"/>
+        <text x="335" y="62" text-anchor="middle" fill="#ff6600" font-size="11" font-weight="700">Priority Queue (max-priority: 10)</text>
+        <!-- Sorted messages -->
+        <rect x="215" y="70" width="50" height="24" rx="3" fill="#ff4466"/>
+        <text x="240" y="86" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">P:10</text>
+        <rect x="270" y="70" width="50" height="24" rx="3" fill="#ff4466" opacity="0.8"/>
+        <text x="295" y="86" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">P:10</text>
+        <rect x="325" y="70" width="50" height="24" rx="3" fill="#ffc040"/>
+        <text x="350" y="86" text-anchor="middle" fill="#000" font-size="10" font-weight="700">P:5</text>
+        <rect x="380" y="70" width="50" height="24" rx="3" fill="#ffc040" opacity="0.7"/>
+        <text x="405" y="86" text-anchor="middle" fill="#000" font-size="10" font-weight="700">P:5</text>
+        <rect x="215" y="100" width="50" height="24" rx="3" fill="#475569"/>
+        <text x="240" y="116" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">P:1</text>
+        <text x="335" y="148" text-anchor="middle" fill="#64748b" font-size="9">Higher priority = consumed FIRST</text>
+        <text x="335" y="162" text-anchor="middle" fill="#64748b" font-size="9">amqplib: { priority: 10 }</text>
+
+        <line x1="470" y1="105" x2="540" y2="105" stroke="#00e5a0" stroke-width="2.5" marker-end="url(#a9g)"/>
+        <text x="505" y="97" text-anchor="middle" fill="#00e5a0" font-size="9">P:10 first!</text>
+
+        <!-- Consumer -->
+        <rect x="540" y="70" width="140" height="70" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="610" y="100" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Worker</text>
+        <text x="610" y="118" text-anchor="middle" fill="#64748b" font-size="10">always picks highest</text>
+        <text x="610" y="132" text-anchor="middle" fill="#64748b" font-size="10">priority first</text>
+
+        <!-- Code hint -->
+        <rect x="730" y="40" width="350" height="130" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="905" y="64" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700">Priority Queue Code</text>
+        <text x="748" y="86" fill="#64748b" font-size="10">// Queue declare:</text>
+        <text x="748" y="102" fill="#ff6600" font-size="10">{ 'x-max-priority': 10 }</text>
+        <text x="748" y="122" fill="#64748b" font-size="10">// Message publish:</text>
+        <text x="748" y="138" fill="#ff6600" font-size="10">{ priority: 10 } // VIP</text>
+        <text x="748" y="154" fill="#ff6600" font-size="10">{ priority: 1  } // Free</text>
+        <text x="748" y="162" fill="#64748b" font-size="9">Range: 0-255</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 10: Prefetch & Backpressure -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 10</span>
+      <span class="diagram-title">Prefetch & Backpressure — Consumer ko overwhelm hone se bachao</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 220" height="220">
+        <defs>
+          <marker id="a10" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a10r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff4466"/></marker>
+          <marker id="a10g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+        </defs>
+
+        <!-- WITHOUT prefetch -->
+        <text x="280" y="22" text-anchor="middle" fill="#ff4466" font-size="12" font-weight="700">❌ Without prefetch(1) — Problem</text>
+        <rect x="20" y="40" width="180" height="80" rx="8" fill="#0d1117" stroke="#ff6600" stroke-width="1.5"/>
+        <text x="110" y="62" text-anchor="middle" fill="#ff6600" font-size="10" font-weight="700">Queue (1000 msgs)</text>
+        <text x="110" y="100" text-anchor="middle" fill="#64748b" font-size="9">All sent to Worker 1</text>
+        <text x="110" y="113" text-anchor="middle" fill="#64748b" font-size="9">immediately!</text>
+        <line x1="200" y1="80" x2="260" y2="60" stroke="#ff4466" stroke-width="3" marker-end="url(#a10r)"/>
+        <line x1="200" y1="80" x2="260" y2="100" stroke="#ff4466" stroke-width="1" stroke-dasharray="3,3"/>
+        <rect x="260" y="35" width="140" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="2"/>
+        <text x="330" y="60" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">Worker 1</text>
+        <text x="330" y="78" text-anchor="middle" fill="#ff4466" font-size="10">💀 OVERWHELMED</text>
+        <rect x="260" y="100" width="140" height="40" rx="8" fill="#0c0505" stroke="#475569" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="330" y="123" text-anchor="middle" fill="#475569" font-size="10">Worker 2 — idle!</text>
+
+        <!-- WITH prefetch -->
+        <text x="750" y="22" text-anchor="middle" fill="#00e5a0" font-size="12" font-weight="700">✅ With prefetch(1) — Fair dispatch</text>
+        <rect x="490" y="40" width="180" height="80" rx="8" fill="#0d1117" stroke="#ff6600" stroke-width="1.5"/>
+        <text x="580" y="62" text-anchor="middle" fill="#ff6600" font-size="10" font-weight="700">Queue (1000 msgs)</text>
+        <text x="580" y="100" text-anchor="middle" fill="#64748b" font-size="9">1 at a time per worker</text>
+
+        <line x1="670" y1="68" x2="730" y2="55" stroke="#00e5a0" stroke-width="2" marker-end="url(#a10g)"/>
+        <line x1="670" y1="90" x2="730" y2="110" stroke="#00e5a0" stroke-width="2" marker-end="url(#a10g)"/>
+
+        <rect x="730" y="30" width="140" height="50" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="800" y="55" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Worker 1</text>
+        <text x="800" y="70" text-anchor="middle" fill="#64748b" font-size="9">1 msg in-flight</text>
+
+        <rect x="730" y="90" width="140" height="50" rx="8" fill="#030c06" stroke="#00e5a0" stroke-width="2"/>
+        <text x="800" y="115" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Worker 2</text>
+        <text x="800" y="130" text-anchor="middle" fill="#64748b" font-size="9">1 msg in-flight</text>
+
+        <!-- Equal distribution -->
+        <rect x="900" y="60" width="180" height="60" rx="8" fill="#030c06" stroke="#166534" stroke-width="1.5"/>
+        <text x="990" y="84" text-anchor="middle" fill="#4ade80" font-size="11">Fair distribution!</text>
+        <text x="990" y="100" text-anchor="middle" fill="#64748b" font-size="10">ACK → next message</text>
+        <text x="990" y="114" text-anchor="middle" fill="#64748b" font-size="10">No worker starved</text>
+
+        <!-- Code -->
+        <text x="550" y="165" text-anchor="middle" fill="#ff6600" font-size="13" font-weight="800" font-family="JetBrains Mono">channel.prefetch(1);</text>
+        <text x="550" y="185" text-anchor="middle" fill="#64748b" font-size="11">prefetch(N) = max N unacknowledged messages per consumer</text>
+        <text x="550" y="200" text-anchor="middle" fill="#64748b" font-size="10">prefetch(1) = safest but slowest | prefetch(10-50) = better throughput</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Production Connection Pooling -->
+  <div style="margin-top:32px;">
+    <h3 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:16px;">Production-Grade Connection Manager</h3>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">NODE.JS</span>
+      <span class="code-desc">rabbitmq-manager.js — Production connection pool with reconnect</span>
+    </div>
+    <div class="code-body"><pre><span class="kw">const</span> amqp = <span class="fn">require</span>(<span class="str">'amqplib'</span>);
+<span class="kw">const</span> EventEmitter = <span class="fn">require</span>(<span class="str">'events'</span>);
+
+<span class="kw">class</span> <span class="cls">RabbitMQManager</span> <span class="kw">extends</span> <span class="cls">EventEmitter</span> {
+  <span class="kw">constructor</span>(url, options = {}) {
+    <span class="kw">super</span>();
+    <span class="kw">this</span>.url          = url;
+    <span class="kw">this</span>.options      = options;
+    <span class="kw">this</span>.connection   = <span class="kw">null</span>;
+    <span class="kw">this</span>.channels     = <span class="kw">new</span> <span class="cls">Map</span>(); <span class="cm">// name → channel</span>
+    <span class="kw">this</span>.reconnecting = <span class="kw">false</span>;
+    <span class="kw">this</span>.maxRetries   = options.maxRetries || <span class="num">10</span>;
+    <span class="kw">this</span>.retryDelay   = options.retryDelay || <span class="num">5000</span>;
+  }
+
+  <span class="kw">async</span> <span class="fn">connect</span>() {
+    <span class="kw">try</span> {
+      <span class="kw">this</span>.connection = <span class="kw">await</span> amqp.<span class="fn">connect</span>(<span class="kw">this</span>.url);
+      console.<span class="fn">log</span>(<span class="str">'🐰 RabbitMQ connected!'</span>);
+      <span class="kw">this</span>.<span class="fn">emit</span>(<span class="str">'connected'</span>);
+
+      <span class="cm">// Connection error handling</span>
+      <span class="kw">this</span>.connection.<span class="fn">on</span>(<span class="str">'error'</span>, (err) => {
+        console.error(<span class="str">'Connection error:'</span>, err.message);
+        <span class="kw">this</span>.<span class="fn">_reconnect</span>();
+      });
+
+      <span class="kw">this</span>.connection.<span class="fn">on</span>(<span class="str">'close'</span>, () => {
+        console.<span class="fn">warn</span>(<span class="str">'🔌 Connection closed — reconnecting...'</span>);
+        <span class="kw">this</span>.<span class="fn">_reconnect</span>();
+      });
+
+    } <span class="kw">catch</span> (err) {
+      console.error(<span class="str">'Failed to connect:'</span>, err.message);
+      <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">_reconnect</span>();
+    }
+  }
+
+  <span class="kw">async</span> <span class="fn">_reconnect</span>(attempt = <span class="num">0</span>) {
+    <span class="kw">if</span> (<span class="kw">this</span>.reconnecting) <span class="kw">return</span>;
+    <span class="kw">if</span> (attempt >= <span class="kw">this</span>.maxRetries) {
+      console.error(<span class="str">'💀 Max reconnection attempts reached'</span>);
+      <span class="kw">this</span>.<span class="fn">emit</span>(<span class="str">'failed'</span>);
+      <span class="kw">return</span>;
+    }
+
+    <span class="kw">this</span>.reconnecting = <span class="kw">true</span>;
+    <span class="kw">const</span> delay = Math.<span class="fn">min</span>(<span class="kw">this</span>.retryDelay * Math.<span class="fn">pow</span>(<span class="num">2</span>, attempt), <span class="num">60000</span>);
+    console.<span class="fn">log</span>(<span class="str">`🔄 Reconnecting in ${delay}ms (attempt ${attempt + 1})`</span>);
+
+    <span class="kw">await new Promise</span>(r => <span class="fn">setTimeout</span>(r, delay));
+    <span class="kw">this</span>.reconnecting = <span class="kw">false</span>;
+    <span class="kw">this</span>.channels.<span class="fn">clear</span>(); <span class="cm">// Old channels invalid hain</span>
+    <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">connect</span>();
+  }
+
+  <span class="kw">async</span> <span class="fn">getChannel</span>(name = <span class="str">'default'</span>) {
+    <span class="kw">if</span> (<span class="kw">this</span>.channels.<span class="fn">has</span>(name)) <span class="kw">return</span> <span class="kw">this</span>.channels.<span class="fn">get</span>(name);
+
+    <span class="kw">const</span> channel = <span class="kw">await</span> <span class="kw">this</span>.connection.<span class="fn">createChannel</span>();
+    channel.<span class="fn">on</span>(<span class="str">'error'</span>, () => <span class="kw">this</span>.channels.<span class="fn">delete</span>(name));
+    channel.<span class="fn">on</span>(<span class="str">'close'</span>, () => <span class="kw">this</span>.channels.<span class="fn">delete</span>(name));
+
+    <span class="kw">this</span>.channels.<span class="fn">set</span>(name, channel);
+    <span class="kw">return</span> channel;
+  }
+
+  <span class="kw">async</span> <span class="fn">publish</span>(exchange, routingKey, message, options = {}) {
+    <span class="kw">const</span> channel = <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">getChannel</span>(<span class="str">'publisher'</span>);
+    <span class="kw">const</span> content = Buffer.<span class="fn">from</span>(JSON.<span class="fn">stringify</span>(message));
+    <span class="kw">return</span> channel.<span class="fn">publish</span>(exchange, routingKey, content, {
+      persistent: <span class="kw">true</span>,
+      contentType: <span class="str">'application/json'</span>,
+      timestamp: Date.<span class="fn">now</span>(),
+      ...options
+    });
+  }
+
+  <span class="kw">async</span> <span class="fn">subscribe</span>(queue, handler, prefetch = <span class="num">10</span>) {
+    <span class="kw">const</span> channel = <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">getChannel</span>(<span class="str">`consumer_${queue}`</span>);
+    <span class="kw">await</span> channel.<span class="fn">prefetch</span>(prefetch);
+
+    channel.<span class="fn">consume</span>(queue, <span class="kw">async</span> (msg) => {
+      <span class="kw">if</span> (!msg) <span class="kw">return</span>;
+      <span class="kw">try</span> {
+        <span class="kw">const</span> data = JSON.<span class="fn">parse</span>(msg.content.<span class="fn">toString</span>());
+        <span class="kw">await</span> <span class="fn">handler</span>(data, msg);
+        channel.<span class="fn">ack</span>(msg);
+      } <span class="kw">catch</span> (err) {
+        channel.<span class="fn">nack</span>(msg, <span class="kw">false</span>, <span class="kw">false</span>); <span class="cm">// → DLQ</span>
+      }
+    }, { noAck: <span class="kw">false</span> });
+  }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">const</span> mq = <span class="kw">new</span> <span class="cls">RabbitMQManager</span>(<span class="str">'amqp://admin:admin123@localhost'</span>);
+<span class="kw">await</span> mq.<span class="fn">connect</span>();
+<span class="kw">await</span> mq.<span class="fn">publish</span>(<span class="str">'notifications'</span>, <span class="str">'email.welcome'</span>, { userId: <span class="num">123</span> });
+<span class="kw">await</span> mq.<span class="fn">subscribe</span>(<span class="str">'email_queue'</span>, <span class="kw">async</span> (data) => {
+  console.<span class="fn">log</span>(<span class="str">'Processing:'</span>, data);
+});</pre></div>
+  </div>
+
+  <!-- DIAGRAM 11: Complete Architecture -->
+  <div class="diagram-wrap" style="margin-top:32px;">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 11</span>
+      <span class="diagram-title">Production Architecture — E-commerce Order Processing with RabbitMQ</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 380" height="380">
+        <defs>
+          <marker id="a11" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a11g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a11b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4d8bff"/></marker>
+          <marker id="a11r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff4466"/></marker>
+        </defs>
+
+        <!-- API Layer -->
+        <rect x="20" y="150" width="130" height="80" rx="10" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="85" y="178" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">Order API</text>
+        <text x="85" y="196" text-anchor="middle" fill="#64748b" font-size="10">POST /orders</text>
+        <text x="85" y="212" text-anchor="middle" fill="#4ade80" font-size="10">200 OK instantly</text>
+
+        <line x1="150" y1="190" x2="210" y2="190" stroke="#ff6600" stroke-width="2.5" marker-end="url(#a11)"/>
+
+        <!-- Topic Exchange -->
+        <rect x="210" y="140" width="160" height="100" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2.5"/>
+        <text x="290" y="172" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="800">orders</text>
+        <text x="290" y="190" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="800">exchange</text>
+        <text x="290" y="210" text-anchor="middle" fill="#64748b" font-size="10">topic type</text>
+        <text x="290" y="228" text-anchor="middle" fill="#fbbf24" font-size="9">key: orders.placed</text>
+
+        <!-- Fan to queues -->
+        <line x1="370" y1="165" x2="430" y2="80" stroke="#ff6600" stroke-width="2" marker-end="url(#a11)"/>
+        <line x1="370" y1="180" x2="430" y2="160" stroke="#ff6600" stroke-width="2" marker-end="url(#a11)"/>
+        <line x1="370" y1="200" x2="430" y2="240" stroke="#ff6600" stroke-width="2" marker-end="url(#a11)"/>
+        <line x1="370" y1="215" x2="430" y2="320" stroke="#ff6600" stroke-width="2" marker-end="url(#a11)"/>
+
+        <!-- Queues -->
+        <rect x="430" y="52" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="507" y="74" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">inventory.queue</text>
+        <text x="507" y="90" text-anchor="middle" fill="#64748b" font-size="9">update stock</text>
+
+        <rect x="430" y="136" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="507" y="158" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">payment.queue</text>
+        <text x="507" y="174" text-anchor="middle" fill="#64748b" font-size="9">process payment</text>
+
+        <rect x="430" y="216" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="507" y="238" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">email.queue</text>
+        <text x="507" y="254" text-anchor="middle" fill="#64748b" font-size="9">send confirmation</text>
+
+        <rect x="430" y="296" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="507" y="318" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">analytics.queue</text>
+        <text x="507" y="334" text-anchor="middle" fill="#64748b" font-size="9">track metrics</text>
+
+        <!-- Workers -->
+        <line x1="585" y1="76" x2="640" y2="76" stroke="#00e5a0" stroke-width="2" marker-end="url(#a11g)"/>
+        <line x1="585" y1="160" x2="640" y2="160" stroke="#00e5a0" stroke-width="2" marker-end="url(#a11g)"/>
+        <line x1="585" y1="240" x2="640" y2="240" stroke="#00e5a0" stroke-width="2" marker-end="url(#a11g)"/>
+        <line x1="585" y1="320" x2="640" y2="320" stroke="#00e5a0" stroke-width="2" marker-end="url(#a11g)"/>
+
+        <rect x="640" y="52" width="145" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="712" y="74" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Inventory Service</text>
+        <text x="712" y="90" text-anchor="middle" fill="#64748b" font-size="9">Redis + DB</text>
+
+        <rect x="640" y="136" width="145" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="712" y="158" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Payment Service</text>
+        <text x="712" y="174" text-anchor="middle" fill="#64748b" font-size="9">Stripe API (retry)</text>
+
+        <rect x="640" y="216" width="145" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="712" y="238" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Email Service</text>
+        <text x="712" y="254" text-anchor="middle" fill="#64748b" font-size="9">SendGrid</text>
+
+        <rect x="640" y="296" width="145" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="712" y="318" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Analytics Service</text>
+        <text x="712" y="334" text-anchor="middle" fill="#64748b" font-size="9">BigQuery</text>
+
+        <!-- DLQ safety net -->
+        <rect x="840" y="195" width="240" height="55" rx="8" fill="#1c0505" stroke="#ff4466" stroke-width="2"/>
+        <text x="960" y="222" text-anchor="middle" fill="#f87171" font-size="12" font-weight="700">Dead Letter Queue</text>
+        <text x="960" y="240" text-anchor="middle" fill="#64748b" font-size="9">payment failures → retry → alert</text>
+        <line x1="785" y1="160" x2="840" y2="210" stroke="#ff4466" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a11r)"/>
+        <text x="815" y="195" fill="#ff4466" font-size="9">❌ fail</text>
+
+        <!-- Summary box -->
+        <rect x="840" y="30" width="240" height="150" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="960" y="54" text-anchor="middle" fill="#ff6600" font-size="11" font-weight="700">Architecture Summary</text>
+        <text x="855" y="74" fill="#64748b" font-size="10">1. Order placed → API returns 200</text>
+        <text x="855" y="90" fill="#64748b" font-size="10">2. Exchange fans out to 4 queues</text>
+        <text x="855" y="106" fill="#64748b" font-size="10">3. Each service processes independently</text>
+        <text x="855" y="122" fill="#64748b" font-size="10">4. Payment fails → DLQ → retry</text>
+        <text x="855" y="138" fill="#64748b" font-size="10">5. No service knows about others</text>
+        <text x="855" y="158" fill="#4ade80" font-size="10">= Decoupled microservices ✓</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: FAANG -->
+<div id="faang" class="section">
+  <div class="section-tag">FAANG Level · Final Section</div>
+  <div class="section-title">FAANG Interview Prep</div>
+  <div class="section-sub">System design interviews mein RabbitMQ se related ye questions aate hain.</div>
+
+  <!-- DIAGRAM 12: NexusChat with RabbitMQ -->
+  <div class="diagram-wrap">
+    <div class="diagram-header">
+      <span class="diagram-num">DIAGRAM 12</span>
+      <span class="diagram-title">NexusChat — RabbitMQ for Notification Pipeline (FAANG Pattern)</span>
+    </div>
+    <div class="diagram-body">
+      <svg viewBox="0 0 1100 280" height="280">
+        <defs>
+          <marker id="a12" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff6600"/></marker>
+          <marker id="a12g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00e5a0"/></marker>
+          <marker id="a12b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4d8bff"/></marker>
+        </defs>
+
+        <!-- Chat Server -->
+        <rect x="20" y="110" width="140" height="80" rx="10" fill="#0a0c1a" stroke="#818cf8" stroke-width="2"/>
+        <text x="90" y="140" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">NexusChat</text>
+        <text x="90" y="158" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="700">API Server</text>
+        <text x="90" y="178" text-anchor="middle" fill="#64748b" font-size="10">message.sent event</text>
+
+        <line x1="160" y1="150" x2="220" y2="150" stroke="#ff6600" stroke-width="2.5" marker-end="url(#a12)"/>
+
+        <!-- Topic Exchange -->
+        <rect x="220" y="100" width="170" height="100" rx="10" fill="#1a0d00" stroke="#ff6600" stroke-width="2.5"/>
+        <text x="305" y="135" text-anchor="middle" fill="#ff6600" font-size="12" font-weight="800">chat.exchange</text>
+        <text x="305" y="155" text-anchor="middle" fill="#64748b" font-size="10">topic exchange</text>
+        <text x="305" y="173" text-anchor="middle" fill="#fbbf24" font-size="9">key: chat.message.*</text>
+        <text x="305" y="190" text-anchor="middle" fill="#fbbf24" font-size="9">key: chat.typing.*</text>
+
+        <!-- Fan to queues -->
+        <line x1="390" y1="130" x2="450" y2="70" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a12)"/>
+        <line x1="390" y1="150" x2="450" y2="150" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a12)"/>
+        <line x1="390" y1="170" x2="450" y2="230" stroke="#ff6600" stroke-width="1.5" marker-end="url(#a12)"/>
+
+        <!-- Queues -->
+        <rect x="450" y="44" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="527" y="66" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">push.notification</text>
+        <text x="527" y="82" text-anchor="middle" fill="#64748b" font-size="9">FCM/APNs</text>
+
+        <rect x="450" y="126" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="527" y="148" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">email.notification</text>
+        <text x="527" y="164" text-anchor="middle" fill="#64748b" font-size="9">digest emails</text>
+
+        <rect x="450" y="206" width="155" height="48" rx="7" fill="#040e1e" stroke="#4d8bff" stroke-width="1.5"/>
+        <text x="527" y="228" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">message.audit</text>
+        <text x="527" y="244" text-anchor="middle" fill="#64748b" font-size="9">compliance log</text>
+
+        <!-- Workers -->
+        <line x1="605" y1="68" x2="665" y2="68" stroke="#00e5a0" stroke-width="2" marker-end="url(#a12g)"/>
+        <line x1="605" y1="150" x2="665" y2="150" stroke="#00e5a0" stroke-width="2" marker-end="url(#a12g)"/>
+        <line x1="605" y1="230" x2="665" y2="230" stroke="#00e5a0" stroke-width="2" marker-end="url(#a12g)"/>
+
+        <rect x="665" y="44" width="150" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="740" y="67" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Push Worker</text>
+        <text x="740" y="83" text-anchor="middle" fill="#64748b" font-size="9">offline user notification</text>
+
+        <rect x="665" y="126" width="150" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="740" y="149" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Email Worker</text>
+        <text x="740" y="165" text-anchor="middle" fill="#64748b" font-size="9">daily/weekly digest</text>
+
+        <rect x="665" y="206" width="150" height="48" rx="7" fill="#030c06" stroke="#00e5a0" stroke-width="1.5"/>
+        <text x="740" y="229" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Audit Worker</text>
+        <text x="740" y="245" text-anchor="middle" fill="#64748b" font-size="9">append to Elasticsearch</text>
+
+        <!-- Key insight -->
+        <rect x="850" y="80" width="230" height="160" rx="10" fill="#0d1117" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="965" y="104" text-anchor="middle" fill="#ff6600" font-size="11" font-weight="700">NexusChat + RabbitMQ</text>
+        <text x="865" y="124" fill="#64748b" font-size="10">✓ Chat server stays fast</text>
+        <text x="865" y="140" fill="#64748b" font-size="10">✓ Notifications async</text>
+        <text x="865" y="156" fill="#64748b" font-size="10">✓ Push/Email/Audit decoupled</text>
+        <text x="865" y="172" fill="#64748b" font-size="10">✓ Worker crash → message safe</text>
+        <text x="865" y="188" fill="#64748b" font-size="10">✓ Scale workers independently</text>
+        <text x="865" y="212" fill="#4ade80" font-size="11" font-weight="700">Resume mein mention karo! ✓</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="faang" style="margin-top:28px;">
+    <div class="faang-title">🎯 FAANG System Design — RabbitMQ Questions & Answers</div>
+    <ul>
+      <li><strong style="color:#e2e8f0">Q: "RabbitMQ vs Kafka — kab kya use karoge?"</strong><br>
+      → RabbitMQ: complex routing logic, task queues, RPC pattern, per-message acknowledgement, varied message sizes. Kafka: event streaming, replay, ordered partition-level processing, millions of events/sec, audit log.</li>
+
+      <li><strong style="color:#e2e8f0">Q: "Messages guaranteed delivery kaise karoge?"</strong><br>
+      → Durable exchange + durable queue + persistent messages + manual ACK. In teen ko combination use karo. Publisher confirms enable karo for producer-side guarantee.</li>
+
+      <li><strong style="color:#e2e8f0">Q: "1 million messages per day handle kaise karoge?"</strong><br>
+      → Multiple consumers (horizontal scale), prefetch tuning (10-50 per consumer), quorum queues for HA, partitioned topic exchanges, lazy queues for large backlogs.</li>
+
+      <li><strong style="color:#e2e8f0">Q: "Single node RabbitMQ production mein acceptable hai?"</strong><br>
+      → NEVER. Minimum 3-node quorum cluster. HAProxy for client-side load balancing. Each node in different availability zone.</li>
+
+      <li><strong style="color:#e2e8f0">Q: "Message ordering guarantee chahiye — kaise karoge?"</strong><br>
+      → Single queue + single consumer = guaranteed order. Multiple consumers = no order guarantee. Agar order chahiye with scale: consistent hashing by entity_id to specific queue.</li>
+
+      <li><strong style="color:#e2e8f0">Q: "Idempotent consumer kaise banate hain?"</strong><br>
+      → Message mein unique message_id include karo. Consumer DB mein check karo "already processed?" before executing. Redis SET NX for fast deduplication check.</li>
+    </ul>
+  </div>
+
+  <!-- Quick Reference -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-title">📋 Quick Reference — Key Commands & Patterns</div>
+    <table>
+      <tr><th>Operation</th><th>Code</th><th>Notes</th></tr>
+      <tr><td>Connect</td><td><code style="color:#ff6600">amqp.connect(url)</code></td><td>1 per application</td></tr>
+      <tr><td>Channel</td><td><code style="color:#ff6600">conn.createChannel()</code></td><td>1 per thread/coroutine</td></tr>
+      <tr><td>Declare Queue</td><td><code style="color:#ff6600">ch.assertQueue(name, {durable:true})</code></td><td>Idempotent</td></tr>
+      <tr><td>Declare Exchange</td><td><code style="color:#ff6600">ch.assertExchange(name, type)</code></td><td>direct/fanout/topic/headers</td></tr>
+      <tr><td>Bind</td><td><code style="color:#ff6600">ch.bindQueue(queue, exchange, key)</code></td><td>Routing rule</td></tr>
+      <tr><td>Publish</td><td><code style="color:#ff6600">ch.publish(exchange, key, Buffer)</code></td><td>persistent:true for durability</td></tr>
+      <tr><td>Send to Queue</td><td><code style="color:#ff6600">ch.sendToQueue(queue, Buffer)</code></td><td>Direct, skips exchange</td></tr>
+      <tr><td>Consume</td><td><code style="color:#ff6600">ch.consume(queue, fn, {noAck:false})</code></td><td>Always manual ACK</td></tr>
+      <tr><td>ACK</td><td><code style="color:#ff6600">ch.ack(msg)</code></td><td>Message processed ✓</td></tr>
+      <tr><td>NACK + DLQ</td><td><code style="color:#ff6600">ch.nack(msg, false, false)</code></td><td>requeue=false → DLQ</td></tr>
+      <tr><td>NACK + Retry</td><td><code style="color:#ff6600">ch.nack(msg, false, true)</code></td><td>requeue=true → back to queue</td></tr>
+      <tr><td>Prefetch</td><td><code style="color:#ff6600">ch.prefetch(1)</code></td><td>Fair dispatch</td></tr>
+      <tr><td>Priority Queue</td><td><code style="color:#ff6600">{'x-max-priority': 10}</code></td><td>Queue arg</td></tr>
+      <tr><td>DLQ Config</td><td><code style="color:#ff6600">{'x-dead-letter-exchange': 'dlx'}</code></td><td>Queue arg</td></tr>
+      <tr><td>Quorum Queue</td><td><code style="color:#ff6600">{'x-queue-type': 'quorum'}</code></td><td>HA, use in production</td></tr>
+      <tr><td>TTL</td><td><code style="color:#ff6600">{'x-message-ttl': 30000}</code></td><td>30s baad expire → DLQ</td></tr>
+    </table>
+  </div>
+
+  <div class="tip" style="margin-top:24px;">
+    <div class="tip-title">✅ PHASE 1 + PHASE 2 COMPLETE — What You Know Now</div>
+    <p><strong style="color:#e2e8f0">Phase 1:</strong> Message queue kya hai, AMQP protocol, 4 exchange types, Producer/Consumer/Queue/Exchange/Binding, first working code, manual ACK pattern. <br><br>
+    <strong style="color:#e2e8f0">Phase 2:</strong> Work queue, Pub/Sub, RPC pattern, Dead Letter Queue, exponential backoff retry, Priority queues, Prefetch & backpressure, Production connection manager with auto-reconnect, 3-node Quorum cluster setup, NexusChat integration, FAANG-level Q&amp;A.</p>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div style="background:#020810; border-top:1px solid rgba(255,102,0,0.2); padding:32px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:#475569; letter-spacing:1px;">
+  RabbitMQ Masterclass · Phase 1 &amp; 2 · Basics to Advanced · FAANG Level · Rajesh Pandit
+  <br><br>
+  <span style="color:#ff6600">Diagrams: 1-12 referenced inline</span> · Reconnect this document anytime for quick revision
+</div>
+
+</body>
+</html>

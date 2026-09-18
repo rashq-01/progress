@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+
+
+    <script>
+
+
+/*
+        const products = [
+            {id : 1,name: "Laptop", category : "Electronic", price: 1000, stock:4},
+            {id : 2,name: "Mouse", category : "Electronic", price: 433, stock:5},
+            {id : 3,name: "Keyboard", category : "Electronic", price: 467, stock:4},
+            {id : 4,name: "Desk Chair", category : "Furniture", price: 3333, stock:1},
+            {id : 5,name: "Monitor", category : "Electronic", price:642 , stock:67},
+            {id : 6,name: "Headphone", category : "Audio", price: 35332, stock:52},
+            {id : 7,name: "Bookshelf", category : "Electronic", price: 345, stock:345},
+        ];
+
+
+
+        // Write a js program to create student obj with the following fields (name,marks,gender,branch,age; Methods :- studentDetails(),studying();
+
+
+        function Student(name,marks,gender,branch,age){
+            this.name = name;
+            this.marks = marks;
+            this.gender = gender;
+            this.branch = branch;
+            this.age = age;
+
+
+            this.studentDetails = ()=>{
+                let detail = `
+                    ----------------Student Details-----------------\n
+                    Name : ${this.name}\n
+                    Marks : ${this.marks}\n
+                    Gender : ${this.gender}\n
+                    Branch : ${this.branch}\n
+                    Age : ${this.age}\n
+                
+                `;
+
+                console.log(detail);
+            }
+            this.studying = (d)=>{
+                console.log(d + "Studying");
+            }
+        }
+
+        let st1 = new Student("Rajes",600,"male","CSE",21);
+        console.log(st1);
+        st1.studentDetails()
+        st1.studying("CSE");
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+/*
+
+const person = {
+    name : 'abc',
+    age : 21,
+    city : "Bengaluru",
+    job : "Employed"
+}
+
+let {name} = person;
+let {name:n,age:a} = person;
+console.log("hi " + n + " is " + a +" years old.");
+
+let {city:homeCity, job="Unemployed"} = person;
+
+console.log("Person is living in " + homeCity + " is "+ job);
+
+function details({job,name:firstName},city){
+    console(`hi ${firstName} is ${job} living in ${city}`);
+}
+
+
+details()
+*/
+
+
+
+
+class Employee{
+
+    constructor(name,id,deptId,salary){
+        this.name = name;
+        this.id = id;
+        this.salary = salary;
+        this.deptId = deptId;
+
+    }
+
+
+    details(){
+        console.log(`Hi welcome ${this.name} having employee id ${this.id} with salary ${this.salary} with department Id : ${this.deptId}`);
+    }
+
+    agreement(year){
+        document.write("The agreement Year : " + year);
+    }
+}
+
+let emp = new Employee("Rajesh",202,"CSE",500000);
+emp.details()
+emp.agreement(2023)
+
+class Vehicle{
+    constructor(name,type,brand,manYear,price){
+        this.name = name;
+        this.type = type
+        this.brand = brand
+        this.manYear = manYear
+        this.price = price;
+    }
+    start(){
+        console.log("The car has been started.");
+    }
+    accelerate(speed){
+        console.log(`This car is accelerate by ${speed}km/hr.`);
+    }
+    details(){
+        console.log(`The car name is ${this.name} which is }${this.type} type of brand ${this.brand}j.`)
+    }
+}
+
+
+let car = new Vehicle("ABC","Electric","XYZ",2020,2000000);
+let aero = new Vehicle("Etihad","Petrolium","")
+    </script>
+</body>
+</html>
